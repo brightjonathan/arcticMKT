@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics — Admin — ArcticMKT</title>
+<link rel="icon" href="../Assests/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0E1218; --panel: #171D26; --panel-alt: #1D2530; --ink: #E7ECF2; --ink-soft: #8B96A5;
+    --line: #2A3240; --accent: #D9A441; --accent-deep: #B9852B; --danger: #E2574C; --good: #4CAF7D;
+    --sidebar-w: 236px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); }
+  a { text-decoration: none; color: inherit; }
+
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+    background: var(--panel); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; padding: 24px 0; z-index: 40; transition: transform 0.25s ease;
+  }
+  .sidebar-brand {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem;
+    padding: 0 22px 20px; border-bottom: 1px solid var(--line); margin-bottom: 16px; display: flex; align-items: center; gap: 9px;
+  }
+  .sidebar-brand .tag { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; color: #17130A; background: var(--accent); padding: 2px 7px; border-radius: 4px; }
+  .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 0 22px 20px; }
+  .sidebar-user .avatar {
+    width: 36px; height: 36px; border-radius: 6px; background: var(--panel-alt); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; color: var(--accent);
+  }
+  .sidebar-user .name { font-size: 0.85rem; font-weight: 500; }
+  .sidebar-user .role { font-size: 0.72rem; color: var(--ink-soft); }
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 0 12px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .nav-group::-webkit-scrollbar { width: 5px; }
+  .nav-group::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+  .nav-group::-webkit-scrollbar-track { background: transparent; }
+  .nav-link {
+    display: flex; align-items: center; gap: 11px; padding: 10px 11px; border-radius: 6px;
+    font-size: 0.86rem; color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease;
+  }
+  .nav-link svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; }
+  .nav-link:hover { background: var(--panel-alt); color: var(--ink); }
+  .nav-link.active { background: var(--panel-alt); color: var(--accent); }
+  .sidebar-foot { margin-top: auto; padding: 0 12px; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 30; background: var(--bg); border-bottom: 1px solid var(--line);
+    padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; margin-left: var(--sidebar-w);
+  }
+  .menu-toggle { display: none; background: none; border: 1px solid var(--line); border-radius: 6px; width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer; }
+  .menu-toggle svg { width: 17px; height: 17px; stroke: var(--ink); }
+  .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.2rem; margin: 0; }
+  .topbar-avatar { width: 34px; height: 34px; border-radius: 6px; background: var(--accent); color: #17130A; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+
+  .content { margin-left: var(--sidebar-w); padding: 26px 30px; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
+  .stat-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 20px 22px; }
+  .stat-label { font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 10px; }
+  .stat-value { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 1.7rem; color: var(--ink); }
+
+  .chart-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-bottom: 18px; }
+
+  .section-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px 24px; }
+  .section-card h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem; margin: 0 0 4px; }
+  .section-card .section-sub { font-size: 0.82rem; color: var(--ink-soft); margin: 0 0 18px; }
+
+  .chart-wrap { position: relative; height: 260px; }
+
+  .note-box {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    background: var(--panel-alt);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 14px;
+    line-height: 1.55;
+  }
+
+  .sidebar-scrim { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 35; }
+  .sidebar-scrim.show { display: block; }
+
+  @media (max-width: 1050px) {
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .chart-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.3); }
+    .sidebar.open { transform: translateX(0); }
+    .topbar, .content { margin-left: 0; }
+    .menu-toggle { display: flex; }
+  }
+  @media (max-width: 560px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .content { padding: 20px 16px; }
+    .topbar { padding: 14px 16px; }
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--danger);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    display: none;
+  }
+  .nav-badge.show { display: inline-block; }
+
+  .bell-btn {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background: var(--panel-alt);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 12px;
+  }
+  .bell-btn svg { width: 15px; height: 15px; stroke: var(--ink-soft); }
+  .bell-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">ArcticMKT <span class="tag">ADMIN</span></div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sidebarAvatar">—</div>
+      <div><div class="name" id="sidebarName">Loading…</div><div class="role">Administrator</div></div>
+    </div>
+
+    <nav class="nav-group">
+      <a class="nav-link active" href="admin-dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"></rect><rect x="13" y="3" width="8" height="8" rx="1.5"></rect><rect x="3" y="13" width="8" height="8" rx="1.5"></rect><rect x="13" y="13" width="8" height="8" rx="1.5"></rect></svg>
+        Overview
+      </a>
+      <a class="nav-link" href="admin-users.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"></circle><path d="M2.5 19c.7-3.2 3-5 6.5-5s5.8 1.8 6.5 5"></path><circle cx="17" cy="8" r="2.4"></circle><path d="M15 14c2.6.3 4.2 1.9 4.7 5"></path></svg>
+        Users
+      </a>
+      <a class="nav-link" href="admin-deposits.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 19h16"></path></svg>
+        All Deposits
+        <span class="nav-badge" id="depositsBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-withdrawals.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21V9"></path><path d="M7 14l5-5 5 5"></path><path d="M4 5h16"></path></svg>
+        All Withdrawals
+        <span class="nav-badge" id="withdrawalsBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-savings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        Our packages
+      </a>
+      <a class="nav-link" href="admin-enrollments.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        All Enrollments
+        <span class="nav-badge" id="maturedBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-messages.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 4h16v12H7l-3 3V4z"></path></svg>
+        Messages
+      </a>
+      <a class="nav-link" href="admin-analytics.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 15v-4M12 15V8M16 15v-6"></path></svg>
+        Analytics
+      </a>
+      <a class="nav-link" href="admin-referrals.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="8" cy="9" r="3"></circle><circle cx="17" cy="7" r="2.5"></circle><path d="M2.5 19c.7-3.2 3-5 5.5-5s4.8 1.8 5.5 5"></path><path d="M14.5 14.5c2 .2 3.7 1.8 4.2 4.5"></path></svg>
+        Referrals
+        <span class="nav-badge" id="eligibleBadge"></span>
+      </a>
+    </nav>
+    
+    <div class="sidebar-foot">
+      <a class="nav-link" href="admin-login.html" id="logoutLink">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="menu-toggle" id="menuToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+      <h1>Analytics</h1>
+    </div>
+    <div style="display:flex; align-items:center;">
+      <div class="bell-btn" id="notifBell" title="Pending deposits and withdrawals">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg>
+        <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
+      </div>
+      <div class="topbar-avatar" id="topbarAvatar">—</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Total users</div><div class="stat-value" id="statUsers">—</div></div>
+      <div class="stat-card"><div class="stat-label">Signups last 7 days</div><div class="stat-value" id="statNewUsers">—</div></div>
+      <div class="stat-card"><div class="stat-label">Open tickets</div><div class="stat-value" id="statOpenTickets">—</div></div>
+      <div class="stat-card"><div class="stat-label">Content items</div><div class="stat-value" id="statContent">—</div></div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="section-card">
+        <h2>Signups over time</h2>
+        <p class="section-sub">Daily new accounts, last 14 days.</p>
+        <div class="chart-wrap"><canvas id="signupsChart"></canvas></div>
+      </div>
+      <div class="section-card">
+        <h2>Tickets by status</h2>
+        <p class="section-sub">Current support queue breakdown.</p>
+        <div class="chart-wrap"><canvas id="ticketsChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid" style="grid-template-columns: 1fr 1.4fr;">
+      <div class="section-card">
+        <h2>Money flow</h2>
+        <p class="section-sub">Deposited, invested, requested, and withdrawn.</p>
+        <div class="chart-wrap"><canvas id="moneyFlowChart"></canvas></div>
+      </div>
+      <div class="section-card">
+        <h2>Breakdown</h2>
+        <p class="section-sub">Exact figures behind the chart.</p>
+        <table>
+          <tbody id="moneyFlowTable">
+            <tr><td colspan="2" style="color:var(--ink-soft); text-align:center; padding:20px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note-box">
+      These charts aggregate data client-side by fetching every document in the "users", "tickets", "deposits", "withdrawals", and "enrollments" collections. That's fine at small scale, but as those collections grow it gets slower and reads more documents than necessary — worth replacing with Firestore aggregation queries or precomputed counters (e.g. updated via a Cloud Function) once you have real volume.
+    </div>
+
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const scrim = document.getElementById('sidebarScrim');
+    document.getElementById('menuToggle').addEventListener('click', () => { sidebar.classList.add('open'); scrim.classList.add('show'); });
+    scrim.addEventListener('click', () => { sidebar.classList.remove('open'); scrim.classList.remove('show'); });
+  </script>
+
+  <script type="module">
+    import { db } from "../firebase.js";
+    import { requireAdmin, adminLogout, initials, loadNotificationBadges } from "./adminAuth.js";
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    function toDate(ts) {
+      if (!ts) return null;
+      return typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+    }
+
+    function dayKey(d) {
+      return d.toISOString().slice(0, 10);
+    }
+
+    async function loadAnalytics() {
+      if (typeof Chart === 'undefined') {
+        console.error('Chart.js failed to load — check the Network tab for a blocked or failed request to chart.umd.min.js. This is usually an ad blocker or privacy extension, not a code issue.');
+        const errorMsg = `<p style="color: var(--danger); font-size: 0.85rem;">Charts couldn't load because the Chart.js library was blocked or failed to download — check your ad blocker or try a different browser.</p>`;
+        document.getElementById('signupsChart').closest('.chart-wrap').innerHTML = errorMsg;
+        document.getElementById('ticketsChart').closest('.chart-wrap').innerHTML = errorMsg;
+        document.getElementById('moneyFlowChart').closest('.chart-wrap').innerHTML = errorMsg;
+        return;
+      }
+
+      let users = [];
+      let tickets = [];
+      let contentCount = 0;
+
+      try {
+        const usersSnap = await getDocs(collection(db, 'users'));
+        users = usersSnap.docs.map(d => d.data());
+      } catch (err) {
+        console.error('Failed to load users for analytics:', err);
+      }
+
+      try {
+        const ticketsSnap = await getDocs(collection(db, 'tickets'));
+        tickets = ticketsSnap.docs.map(d => d.data());
+      } catch (err) {
+        console.error('Failed to load tickets for analytics:', err);
+      }
+
+      try {
+        const contentSnap = await getDocs(collection(db, 'content'));
+        contentCount = contentSnap.size;
+      } catch (err) {
+        console.error('Failed to load content for analytics:', err);
+      }
+
+      // ---- Stat cards ----
+      document.getElementById('statUsers').textContent = users.length;
+      document.getElementById('statContent').textContent = contentCount;
+
+      const now = new Date();
+      const sevenDaysAgo = new Date(now); sevenDaysAgo.setDate(now.getDate() - 7);
+      const newUsers = users.filter(u => {
+        const d = toDate(u.createdAt);
+        return d && d >= sevenDaysAgo;
+      }).length;
+      document.getElementById('statNewUsers').textContent = newUsers;
+
+      const openCount = tickets.filter(t => (t.status || 'open') === 'open').length;
+      document.getElementById('statOpenTickets').textContent = openCount;
+
+      // ---- Signups over time (last 14 days) ----
+      const days = [];
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date(now); d.setDate(now.getDate() - i);
+        days.push(dayKey(d));
+      }
+      const countsByDay = Object.fromEntries(days.map(k => [k, 0]));
+      users.forEach(u => {
+        const d = toDate(u.createdAt);
+        if (!d) return;
+        const key = dayKey(d);
+        if (key in countsByDay) countsByDay[key] += 1;
+      });
+
+      new Chart(document.getElementById('signupsChart'), {
+        type: 'line',
+        data: {
+          labels: days.map(k => k.slice(5)),
+          datasets: [{
+            label: 'Signups',
+            data: days.map(k => countsByDay[k]),
+            borderColor: '#D9A441',
+            backgroundColor: 'rgba(217,164,65,0.15)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#8B96A5' }, grid: { color: '#2A3240' } },
+            y: { ticks: { color: '#8B96A5', precision: 0 }, grid: { color: '#2A3240' }, beginAtZero: true }
+          }
+        }
+      });
+
+      // ---- Tickets by status ----
+      const statusCounts = { open: 0, pending: 0, closed: 0 };
+      tickets.forEach(t => {
+        const s = t.status || 'open';
+        if (s in statusCounts) statusCounts[s] += 1;
+      });
+
+      new Chart(document.getElementById('ticketsChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Open', 'Pending', 'Closed'],
+          datasets: [{
+            data: [statusCounts.open, statusCounts.pending, statusCounts.closed],
+            backgroundColor: ['#D9A441', '#8B96A5', '#4CAF7D'],
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#8B96A5' }, grid: { display: false } },
+            y: { ticks: { color: '#8B96A5', precision: 0 }, grid: { color: '#2A3240' }, beginAtZero: true }
+          }
+        }
+      });
+
+      // ---- Money flow pie chart ----
+      let deposits = [], withdrawals = [], enrollments = [];
+      try {
+        const depSnap = await getDocs(collection(db, 'deposits'));
+        deposits = depSnap.docs.map(d => d.data());
+      } catch (err) {
+        console.error('Failed to load deposits for money flow chart:', err);
+      }
+      try {
+        const wSnap = await getDocs(collection(db, 'withdrawals'));
+        withdrawals = wSnap.docs.map(d => d.data());
+      } catch (err) {
+        console.error('Failed to load withdrawals for money flow chart:', err);
+      }
+      try {
+        const enrollSnap = await getDocs(collection(db, 'enrollments'));
+        enrollments = enrollSnap.docs.map(d => d.data());
+      } catch (err) {
+        console.error('Failed to load enrollments for money flow chart:', err);
+      }
+
+      const totalDeposited = deposits.filter(d => d.status === 'approved').reduce((s, d) => s + Number(d.amount || 0), 0);
+      const totalInvested = enrollments.reduce((s, e) => s + Number(e.amount || 0), 0);
+      const totalRequested = withdrawals.filter(w => (w.status || 'pending') === 'pending').reduce((s, w) => s + Number(w.amount || 0), 0);
+      const totalWithdrawn = withdrawals.filter(w => w.status === 'approved').reduce((s, w) => s + Number(w.amount || 0), 0);
+
+      const moneyLabels = ['Total deposited', 'Total invested', 'Requested withdrawal', 'Total withdrawn'];
+      const moneyValues = [totalDeposited, totalInvested, totalRequested, totalWithdrawn];
+      const moneyColors = ['#4CAF7D', '#D9A441', '#8B96A5', '#E2574C'];
+
+      new Chart(document.getElementById('moneyFlowChart'), {
+        type: 'pie',
+        data: {
+          labels: moneyLabels,
+          datasets: [{ data: moneyValues, backgroundColor: moneyColors, borderColor: '#171D26', borderWidth: 2 }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#8B96A5', boxWidth: 12, padding: 14 } }
+          }
+        }
+      });
+
+      const moneyTable = document.getElementById('moneyFlowTable');
+      const total = moneyValues.reduce((a, b) => a + b, 0) || 1;
+      moneyTable.innerHTML = moneyLabels.map((label, i) => `
+        <tr>
+          <td style="padding:10px 0; border-bottom:1px solid var(--line);">
+            <span style="display:inline-block; width:9px; height:9px; border-radius:2px; background:${moneyColors[i]}; margin-right:8px;"></span>
+            ${label}
+          </td>
+          <td style="padding:10px 0; border-bottom:1px solid var(--line); text-align:right; font-family:'IBM Plex Mono',monospace;">
+            $${moneyValues[i].toFixed(2)} <span style="color:var(--ink-soft); font-size:0.78rem;">(${((moneyValues[i] / total) * 100).toFixed(1)}%)</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    requireAdmin((user, adminData) => {
+      const name = adminData.name || user.email;
+      document.getElementById('sidebarName').textContent = name;
+      const tag = initials(name);
+      document.getElementById('sidebarAvatar').textContent = tag;
+      document.getElementById('topbarAvatar').textContent = tag;
+      loadAnalytics();
+      loadNotificationBadges();
+    });
+
+    document.getElementById('notifBell').addEventListener('click', () => {
+      window.location.href = 'admin-deposits.html';
+    });
+
+    document.getElementById('logoutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const confirmLogout = confirm('Are you sure you want to log out?');
+        if (!confirmLogout) {
+            return;
+        }
+      await adminLogout();
+    });
+  </script>
+
+</body>
+</html>

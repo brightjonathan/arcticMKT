@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposits - Admin - ArcticMKT</title>
+<link rel="icon" href="../Assests/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E1218; --panel: #171D26; --panel-alt: #1D2530; --ink: #E7ECF2; --ink-soft: #8B96A5;
+    --line: #2A3240; --accent: #D9A441; --accent-deep: #B9852B; --danger: #E2574C; --good: #4CAF7D;
+    --sidebar-w: 236px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); }
+  a { text-decoration: none; color: inherit; }
+
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+    background: var(--panel); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; padding: 24px 0; z-index: 40; transition: transform 0.25s ease;
+  }
+  .sidebar-brand {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem;
+    padding: 0 22px 20px; border-bottom: 1px solid var(--line); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .sidebar-brand .tag {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; color: #17130A;
+    background: var(--accent); padding: 2px 7px; border-radius: 4px;
+  }
+  .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 0 22px 20px; }
+  .sidebar-user .avatar {
+    width: 36px; height: 36px; border-radius: 6px; background: var(--panel-alt); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; color: var(--accent);
+  }
+  .sidebar-user .name { font-size: 0.85rem; font-weight: 500; }
+  .sidebar-user .role { font-size: 0.72rem; color: var(--ink-soft); }
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 0 12px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .nav-group::-webkit-scrollbar { width: 5px; }
+  .nav-group::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+  .nav-group::-webkit-scrollbar-track { background: transparent; }
+  .nav-link {
+    display: flex; align-items: center; gap: 11px; padding: 10px 11px; border-radius: 6px;
+    font-size: 0.86rem; color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease;
+  }
+  .nav-link svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; }
+  .nav-link:hover { background: var(--panel-alt); color: var(--ink); }
+  .nav-link.active { background: var(--panel-alt); color: var(--accent); }
+  .sidebar-foot { margin-top: auto; padding: 0 12px; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 30; background: var(--bg); border-bottom: 1px solid var(--line);
+    padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; margin-left: var(--sidebar-w);
+  }
+  .menu-toggle {
+    display: none; background: none; border: 1px solid var(--line); border-radius: 6px;
+    width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .menu-toggle svg { width: 17px; height: 17px; stroke: var(--ink); }
+  .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.2rem; margin: 0; }
+  .topbar-avatar {
+    width: 34px; height: 34px; border-radius: 6px; background: var(--accent); color: #17130A;
+    display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;
+  }
+
+  .content { margin-left: var(--sidebar-w); padding: 26px 30px; }
+
+  .toolbar { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+
+  .search-input, .filter-select {
+    padding: 10px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel);
+    color: var(--ink); font-size: 0.86rem; font-family: 'Inter', sans-serif;
+  }
+  .search-input { flex: 1; min-width: 220px; }
+  .search-input:focus, .filter-select:focus { outline: none; border-color: var(--accent); }
+
+  .new-btn {
+    margin-left: auto;
+    padding: 10px 18px;
+    background: var(--accent);
+    color: #17130A;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+  }
+  .new-btn:hover { background: var(--accent-deep); }
+
+  .section-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px 24px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; font-size: 0.74rem; color: var(--ink-soft); font-weight: 500; padding: 10px 12px;
+    border-bottom: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  tbody td { padding: 12px; font-size: 0.86rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  .empty-row td { color: var(--ink-soft); text-align: center; padding: 30px 12px; }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 500; }
+  .pill-published { background: rgba(76,175,125,0.14); color: var(--good); }
+  .pill-draft { background: rgba(217,164,65,0.14); color: var(--accent); }
+
+  .type-tag {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    background: var(--panel-alt);
+    border: 1px solid var(--line);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .row-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel-alt);
+    color: var(--ink-soft); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .icon-btn svg { width: 14px; height: 14px; stroke: currentColor; }
+  .icon-btn:hover { color: var(--ink); border-color: var(--accent); }
+  .icon-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    align-items: center; justify-content: center; z-index: 50; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    width: 100%; max-width: 520px; padding: 28px 26px; max-height: 90vh; overflow-y: auto;
+  }
+  .modal-box h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.15rem; margin: 0 0 20px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 0.82rem; font-weight: 500; margin-bottom: 7px; color: var(--ink-soft); }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--panel-alt); color: var(--ink); font-size: 0.88rem; font-family: 'Inter', sans-serif;
+  }
+  .field textarea { resize: vertical; min-height: 110px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+  .btn { flex: 1; padding: 10px 0; border-radius: 6px; font-size: 0.86rem; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #17130A; }
+  .btn-primary:hover { background: var(--accent-deep); }
+  .btn-danger { background: rgba(226,87,76,0.14); color: var(--danger); border: 1px solid rgba(226,87,76,0.3); }
+  .btn-danger:hover { background: rgba(226,87,76,0.22); }
+  .btn-ghost { background: var(--panel-alt); color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--line); color: var(--ink); }
+
+  .sidebar-scrim { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 35; }
+  .sidebar-scrim.show { display: block; }
+
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.3); }
+    .sidebar.open { transform: translateX(0); }
+    .topbar, .content { margin-left: 0; }
+    .menu-toggle { display: flex; }
+  }
+  @media (max-width: 560px) {
+    .content { padding: 20px 16px; }
+    .topbar { padding: 14px 16px; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--danger);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    display: none;
+  }
+  .nav-badge.show { display: inline-block; }
+
+  .bell-btn {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background: var(--panel-alt);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 12px;
+  }
+  .bell-btn svg { width: 15px; height: 15px; stroke: var(--ink-soft); }
+  .bell-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">ArcticMKT <span class="tag">ADMIN</span></div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sidebarAvatar">—</div>
+      <div><div class="name" id="sidebarName">Loading…</div><div class="role">Administrator</div></div>
+    </div>
+
+    <nav class="nav-group">
+      <a class="nav-link active" href="admin-dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"></rect><rect x="13" y="3" width="8" height="8" rx="1.5"></rect><rect x="3" y="13" width="8" height="8" rx="1.5"></rect><rect x="13" y="13" width="8" height="8" rx="1.5"></rect></svg>
+        Overview
+      </a>
+      <a class="nav-link" href="admin-users.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"></circle><path d="M2.5 19c.7-3.2 3-5 6.5-5s5.8 1.8 6.5 5"></path><circle cx="17" cy="8" r="2.4"></circle><path d="M15 14c2.6.3 4.2 1.9 4.7 5"></path></svg>
+        Users
+      </a>
+      <a class="nav-link" href="admin-deposits.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 19h16"></path></svg>
+        All Deposits
+        <span class="nav-badge" id="depositsBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-withdrawals.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21V9"></path><path d="M7 14l5-5 5 5"></path><path d="M4 5h16"></path></svg>
+        All Withdrawals
+        <span class="nav-badge" id="withdrawalsBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-savings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        Our packages
+      </a>
+      <a class="nav-link" href="admin-enrollments.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        All Enrollments
+        <span class="nav-badge" id="maturedBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-messages.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 4h16v12H7l-3 3V4z"></path></svg>
+        Messages
+      </a>
+      <a class="nav-link" href="admin-analytics.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 15v-4M12 15V8M16 15v-6"></path></svg>
+        Analytics
+      </a>
+      <a class="nav-link" href="admin-referrals.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="8" cy="9" r="3"></circle><circle cx="17" cy="7" r="2.5"></circle><path d="M2.5 19c.7-3.2 3-5 5.5-5s4.8 1.8 5.5 5"></path><path d="M14.5 14.5c2 .2 3.7 1.8 4.2 4.5"></path></svg>
+        Referrals
+        <span class="nav-badge" id="eligibleBadge"></span>
+      </a>
+    </nav>
+    
+    <div class="sidebar-foot">
+      <a class="nav-link" href="admin-login.html" id="logoutLink">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="menu-toggle" id="menuToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+      <h1>Deposits</h1>
+    </div>
+    <div style="display:flex; align-items:center;">
+      <div class="bell-btn" id="notifBell" title="Pending deposits and withdrawals">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg>
+        <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
+      </div>
+      <div class="topbar-avatar" id="topbarAvatar">—</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="toolbar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by name or email…">
+      <select class="filter-select" id="statusFilter">
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+        <option value="all">All statuses</option>
+      </select>
+    </div>
+
+    <div class="section-card">
+      <table>
+        <thead><tr><th>User</th><th>Amount</th><th>Account used</th><th>Requested</th><th>Status</th><th></th></tr></thead>
+        <tbody id="itemsBody">
+          <tr class="empty-row"><td colspan="6">Loading deposits…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Deposit detail / approve-reject modal -->
+  <div class="modal-overlay" id="itemModal">
+    <div class="modal-box">
+      <h3>Deposit request</h3>
+      <div id="depositDetail" style="margin-bottom: 18px;"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('itemModal')">Close</button>
+        <button type="button" class="btn btn-danger" id="rejectBtn">Reject</button>
+        <button type="button" class="btn btn-primary" id="approveBtn">Approve</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const scrim = document.getElementById('sidebarScrim');
+    document.getElementById('menuToggle').addEventListener('click', () => { sidebar.classList.add('open'); scrim.classList.add('show'); });
+    scrim.addEventListener('click', () => { sidebar.classList.remove('open'); scrim.classList.remove('show'); });
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  </script>
+
+  <script type="module">
+    import { db } from "../firebase.js";
+    import { requireAdmin, adminLogout, initials, loadNotificationBadges } from "./adminAuth.js";
+    import { collection, getDocs, doc, updateDoc, increment, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    let allDeposits = [];
+    let openId = null;
+
+    function formatDateTime(ts) {
+      if (!ts) return '—';
+      const d = typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+      return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderRows() {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const tbody = document.getElementById('itemsBody');
+
+      const filtered = allDeposits.filter(d => {
+        const matchesSearch = !search ||
+          (d.name || '').toLowerCase().includes(search) ||
+          (d.email || '').toLowerCase().includes(search);
+        const matchesStatus = statusFilter === 'all' || (d.status || 'pending') === statusFilter;
+        return matchesSearch && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="6">No deposit requests match your search.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(d => {
+        const status = d.status || 'pending';
+        const pillStyle = status === 'approved' ? 'background:rgba(76,175,125,0.14); color:var(--good);'
+          : status === 'rejected' ? 'background:rgba(226,87,76,0.14); color:var(--danger);'
+          : 'background:rgba(139,150,165,0.16); color:var(--ink-soft);';
+        return `
+        <tr>
+          <td>${d.name || d.email || '—'}</td>
+          <td>$${Number(d.amount || 0).toFixed(2)}</td>
+          <td>${d.account || '—'}</td>
+          <td>${formatDateTime(d.createdAt)}</td>
+          <td><span class="pill" style="${pillStyle}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+          <td>
+            <button class="icon-btn" title="View" data-id="${d.id}">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </td>
+        </tr>
+      `;
+      }).join('');
+    }
+
+    async function loadDeposits() {
+      try {
+        const q = query(collection(db, 'deposits'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        allDeposits = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderRows();
+      } catch (err) {
+        console.error('Failed to load deposits:', err);
+        document.getElementById('itemsBody').innerHTML =
+          `<tr class="empty-row"><td colspan="6">Couldn't load deposits. Check the console and your Firestore rules.</td></tr>`;
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderRows);
+    document.getElementById('statusFilter').addEventListener('change', renderRows);
+
+    document.getElementById('itemsBody').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-id]');
+      if (!btn) return;
+      const dep = allDeposits.find(d => d.id === btn.dataset.id);
+      if (!dep) return;
+      openId = dep.id;
+
+      const rowStyle = 'display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); font-size:0.86rem;';
+      document.getElementById('depositDetail').innerHTML = `
+        <div style="${rowStyle}"><span style="color:var(--ink-soft);">User</span><span>${dep.name || '—'}</span></div>
+        <div style="${rowStyle}"><span style="color:var(--ink-soft);">Email</span><span>${dep.email || '—'}</span></div>
+        <div style="${rowStyle}"><span style="color:var(--ink-soft);">Amount</span><span>$${Number(dep.amount || 0).toFixed(2)}</span></div>
+        <div style="${rowStyle}"><span style="color:var(--ink-soft);">Account used</span><span>${dep.account || '—'}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:10px 0; font-size:0.86rem;"><span style="color:var(--ink-soft);">Status</span><span>${(dep.status || 'pending').replace(/^\w/, c => c.toUpperCase())}</span></div>
+      `;
+
+      const isPending = (dep.status || 'pending') === 'pending';
+      document.getElementById('approveBtn').style.display = isPending ? 'inline-block' : 'none';
+      document.getElementById('rejectBtn').style.display = isPending ? 'inline-block' : 'none';
+      openModal('itemModal');
+    });
+
+    document.getElementById('approveBtn').addEventListener('click', async () => {
+      if (!openId) return;
+      const dep = allDeposits.find(d => d.id === openId);
+      if (!dep) return;
+      try {
+        await updateDoc(doc(db, 'users', dep.uid), { balance: increment(Number(dep.amount || 0)) });
+        await updateDoc(doc(db, 'deposits', openId), { status: 'approved', updatedAt: serverTimestamp() });
+        dep.status = 'approved';
+        renderRows();
+        loadNotificationBadges();
+        closeModal('itemModal');
+      } catch (err) {
+        console.error('Failed to approve deposit:', err);
+        alert("Couldn't approve this deposit. Check your Firestore rules.");
+      }
+    });
+
+    document.getElementById('rejectBtn').addEventListener('click', async () => {
+      if (!openId) return;
+      const dep = allDeposits.find(d => d.id === openId);
+      if (!dep) return;
+      try {
+        await updateDoc(doc(db, 'deposits', openId), { status: 'rejected', updatedAt: serverTimestamp() });
+        dep.status = 'rejected';
+        renderRows();
+        loadNotificationBadges();
+        closeModal('itemModal');
+      } catch (err) {
+        console.error('Failed to reject deposit:', err);
+        alert("Couldn't reject this deposit. Check your Firestore rules.");
+      }
+    });
+
+    requireAdmin((user, adminData) => {
+      const name = adminData.name || user.email;
+      document.getElementById('sidebarName').textContent = name;
+      const tag = initials(name);
+      document.getElementById('sidebarAvatar').textContent = tag;
+      document.getElementById('topbarAvatar').textContent = tag;
+      loadDeposits();
+      loadNotificationBadges();
+    });
+
+    document.getElementById('notifBell').addEventListener('click', () => {
+      window.location.href = 'admin-deposits.html';
+    });
+
+    document.getElementById('logoutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const confirmLogout = confirm('Are you sure you want to log out?');
+        if (!confirmLogout) {
+            return;
+        }
+      await adminLogout();
+    });
+  </script>
+
+</body>
+</html>

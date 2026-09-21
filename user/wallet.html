@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposit - ArcticMKT</title>
+<link rel="icon" href="../Assests/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #132A3A;
+    --ink-soft: #4C6572;
+    --bg: #F5F9FA;
+    --panel: #FFFFFF;
+    --accent: #2E6F80;
+    --accent-deep: #163B47;
+    --line: #DCE6E9;
+    --chip: #E7F1F2;
+    --good: #2E7D5B;
+    --warn: #B3441E;
+    --sidebar-w: 240px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ---------------- Sidebar ---------------- */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--accent-deep);
+    color: #EAF3F4;
+    display: flex;
+    flex-direction: column;
+    padding: 26px 0;
+    z-index: 40;
+    transition: transform 0.25s ease;
+  }
+
+  .sidebar-brand {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 0 24px 26px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 18px;
+  }
+
+  .sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px 22px;
+  }
+
+  .sidebar-user .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #2E6F80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #EAF3F4;
+    flex-shrink: 0;
+  }
+
+  .sidebar-user .name {
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+
+  .sidebar-user .mail {
+    font-size: 0.75rem;
+    color: #9FC6CC;
+  }
+
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 12px;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #C7DEE1;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-link svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    flex-shrink: 0;
+  }
+
+  .nav-link:hover {
+    background: rgba(255,255,255,0.06);
+    color: #EAF3F4;
+  }
+
+  .nav-link.active {
+    background: rgba(255,255,255,0.1);
+    color: #EAF3F4;
+  }
+
+  .sidebar-foot {
+    margin-top: auto;
+    padding: 0 12px;
+  }
+
+  /* ---------------- Topbar ---------------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: var(--sidebar-w);
+  }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .menu-toggle svg { width: 18px; height: 18px; stroke: var(--ink); }
+
+  .topbar h1 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .bell-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--chip);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .bell-btn svg { width: 17px; height: 17px; stroke: var(--accent-deep); }
+
+  .bell-dot {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--warn);
+  }
+
+  .topbar-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* ---------------- Content ---------------- */
+  .content {
+    margin-left: var(--sidebar-w);
+    padding: 28px;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: "";
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(46,111,128,0.07), transparent 70%);
+  }
+
+  .stat-label {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .stat-value {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    font-size: 1.9rem;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .stat-action {
+    font-size: 0.82rem;
+    color: var(--accent-deep);
+    font-weight: 500;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .stat-action:hover { text-decoration: underline; }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 32px 0 16px;
+  }
+
+  .section-head h2 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin: 0;
+  }
+
+  .section-head a {
+    font-size: 0.85rem;
+    color: var(--accent-deep);
+    font-weight: 500;
+  }
+
+  .section-head a:hover { text-decoration: underline; }
+
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .plan-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .plan-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  .plan-tag {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+
+  .plan-stats {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .plan-stats li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+  }
+
+  .plan-stats li span:first-child { color: var(--ink-soft); }
+  .plan-stats li span:last-child { font-weight: 500; }
+
+  .plan-btn {
+    margin-top: auto;
+    width: 100%;
+    padding: 11px 0;
+    background: var(--accent-deep);
+    color: #EAF3F4;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    font-family: 'Work Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .plan-btn:hover { background: var(--accent); }
+
+  .table-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    text-align: left;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+    padding: 14px 20px;
+    background: var(--chip);
+  }
+
+  tbody td {
+    padding: 14px 20px;
+    font-size: 0.88rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 500;
+  }
+
+  .status-pending { background: #FBEFE4; color: var(--warn); }
+  .status-complete { background: #E4F3EC; color: var(--good); }
+
+  /* ---------------- Modal (UI only) ---------------- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(19,42,58,0.45);
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: var(--panel);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    padding: 30px 28px;
+  }
+
+  .modal-box h3 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin: 0 0 6px;
+  }
+
+  .modal-box .bal-note {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 7px;
+  }
+
+  .field input, .field select {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font-size: 0.92rem;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--ink);
+    background: #fff;
+  }
+
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(46,111,128,0.12);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .btn-primary, .btn-ghost {
+    flex: 1;
+    padding: 11px 0;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Work Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary { background: var(--accent-deep); color: #EAF3F4; }
+  .btn-primary:hover { background: var(--accent); }
+
+  .btn-ghost { background: #fff; color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--chip); }
+
+  /* ---------------- Responsive ---------------- */
+  @media (max-width: 1000px) {
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .plan-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 860px) {
+    .sidebar {
+      transform: translateX(-100%);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .topbar, .content { margin-left: 0; }
+    .menu-toggle { display: flex; }
+  }
+
+  @media (max-width: 640px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .plan-grid { grid-template-columns: 1fr; }
+    .content { padding: 20px 16px; }
+    .topbar { padding: 14px 16px; }
+    table { font-size: 0.8rem; }
+    thead th, tbody td { padding: 12px; }
+  }
+
+  .sidebar-scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(19,42,58,0.4);
+    z-index: 35;
+  }
+
+  .sidebar-scrim.show { display: block; }
+
+  .status-box {
+    font-size: 0.85rem;
+    padding: 11px 14px;
+    border-radius: 5px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .status-error { background: #FBEAE3; color: #A6391A; border: 1px solid #F1C9B8; }
+  .status-success { background: #E4F3EC; color: #1F6B4A; border: 1px solid #BFE3D2; }
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">ArcticMKT</div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sidebarAvatar">—</div>
+      <div>
+        <div class="name" id="sidebarName">Loading…</div>
+        <div class="mail" id="sidebarEmail"></div>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <a class="nav-link" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"></rect><rect x="13" y="3" width="8" height="8" rx="1.5"></rect><rect x="3" y="13" width="8" height="8" rx="1.5"></rect><rect x="13" y="13" width="8" height="8" rx="1.5"></rect></svg>
+        Dashboard
+      </a>
+      <a class="nav-link" href="profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6"></path></svg>
+        My Profile
+      </a>
+      <a class="nav-link active" href="wallet.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M3 10h18"></path><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path></svg>
+        Deposit / Fund Wallet
+      </a>
+      <a class="nav-link" href="plans.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path><path d="M14 3v5h5"></path></svg>
+        My Savings Plans
+      </a>
+      <a class="nav-link" href="withdrawal.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 19h16"></path></svg>
+        Withdrawals
+      </a>
+      <a class="nav-link" href="referrals.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="8" cy="9" r="3"></circle><circle cx="17" cy="7" r="2.5"></circle><path d="M2.5 19c.7-3.2 3-5 5.5-5s4.8 1.8 5.5 5"></path><path d="M14.5 14.5c2 .2 3.7 1.8 4.2 4.5"></path></svg>
+        Referrals
+      </a>
+      <a class="nav-link" href="support.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M9.2 9a2.8 2.8 0 0 1 5.4.9c0 1.9-2.6 1.9-2.6 3.8"></path><circle cx="12" cy="17" r="0.4" fill="currentColor" stroke="none"></circle></svg>
+        Contact Support
+      </a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a class="nav-link" href="../login.html" id="logoutLink">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="menu-toggle" id="menuToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+      <h1>Deposit</h1>
+    </div>
+    <div class="topbar-right">
+      <div class="bell-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg>
+        <span class="bell-dot"></span>
+      </div>
+      <div class="topbar-avatar" id="topbarAvatar">—</div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="content">
+
+    <div class="stat-grid" style="grid-template-columns: 1fr; margin-bottom: 24px;">
+      <div class="stat-card">
+        <div class="stat-label">Wallet balance</div>
+        <div class="stat-value" id="balanceValue">$0.00</div>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top: 0;">
+      <h2>Send your deposit</h2>
+    </div>
+    <p style="color: var(--ink-soft); font-size: 0.9rem; margin: -8px 0 20px; max-width: 60ch;">
+      Transfer your deposit to one of the accounts below, then click "I have sent it" to let us know — an admin will confirm the transfer and credit your wallet.
+    </p>
+
+    <div class="plan-grid" id="accountsGrid">
+      <p style="color: var(--ink-soft);">Loading accounts…</p>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <button class="plan-btn" style="width: auto; padding: 12px 28px;" id="sentItBtn">I have sent it</button>
+    </div>
+
+  </div>
+
+  <!-- Deposit amount modal -->
+  <div class="modal-overlay" id="depositModal">
+    <div class="modal-box">
+      <h3>Confirm your deposit</h3>
+      <p class="bal-note">Tell us how much you sent and which account you used — an admin will verify and credit your wallet.</p>
+      <div id="depositStatus" class="status-box" style="display:none;"></div>
+      <form id="depositForm">
+        <div class="field">
+          <label for="depositAmount">Amount sent ($)</label>
+          <input type="number" id="depositAmount" min="0.01" step="0.01" placeholder="Enter amount" required>
+        </div>
+        <div class="field">
+          <label for="depositAccount">Account used</label>
+          <select id="depositAccount" required></select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" onclick="closeModal('depositModal')">Cancel</button>
+          <button type="submit" class="btn-primary" id="depositSubmitBtn">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!--
+    Load order matters here:
+    1. JsBarcode (a plain global script) must load and finish BEFORE any code
+       that calls JsBarcode(...).
+    2. The sidebar-toggle + account-rendering script runs next (plain script,
+       not a module, so it needs JsBarcode already defined).
+    3. The Firebase module script runs last, and is the only one that talks
+       to auth/Firestore.
+  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const scrim = document.getElementById('sidebarScrim');
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      sidebar.classList.add('open');
+      scrim.classList.add('show');
+    });
+    scrim.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      scrim.classList.remove('show');
+    });
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // These three accounts are static for now. If you want them
+    // admin-editable later, move this array into a Firestore collection
+    // (e.g. "depositAccounts") and fetch it the same way plans.html does.
+    const DEPOSIT_ACCOUNTS = [
+      { label: 'USDC Wallet', accountName: 'ArcticMKT Treasury', accountNumber: '0x67eC75EAE58C5eB9a81b7380d70Aa236f020239c' },
+      { label: 'BTC Wallet', accountName: 'ArcticMKT Treasury', accountNumber: 'bc1qcjsqzy9sd26u85u4kxua2navkrmveuylq5kwqd' },
+      { label: 'ETH Wallet', accountName: 'ArcticMKT Treasury', accountNumber: '0x08e97dbe1b0ec5314B440e5a70aEeb4D1c093A0d' },
+    ];
+
+    function renderAccounts() {
+      const grid = document.getElementById('accountsGrid');
+      const select = document.getElementById('depositAccount');
+      if (!grid || !select) {
+        console.error('renderAccounts: required elements not found in DOM.');
+        return;
+      }
+
+      grid.innerHTML = DEPOSIT_ACCOUNTS.map(acc => `
+        <div class="plan-card">
+          <div class="plan-name">${acc.label}</div>
+          <div class="plan-tag">${acc.accountName}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; word-break: break-all; background: var(--chip); padding: 10px 12px; border-radius: 5px; margin-bottom: 12px;">
+            ${acc.accountNumber}
+          </div>
+          <svg class="barcode" data-value="${acc.accountNumber}" style="width:100%; max-width:220px;"></svg>
+          <button type="button" class="plan-btn copy-btn" data-copy="${acc.accountNumber}" style="margin-top: 10px;">Copy account number</button>
+        </div>
+      `).join('');
+
+      select.innerHTML = DEPOSIT_ACCOUNTS.map(acc => `<option value="${acc.label}">${acc.label}</option>`).join('');
+
+      document.querySelectorAll('.barcode').forEach(el => {
+        if (typeof JsBarcode !== 'function') {
+          console.error('JsBarcode failed to load — check your network/CDN access.');
+          return;
+        }
+        try {
+          JsBarcode(el, el.dataset.value, {
+            format: 'CODE128',
+            width: 1.4,
+            height: 44,
+            displayValue: false,
+            background: 'transparent',
+            lineColor: '#132A3A',
+            margin: 0
+          });
+        } catch (err) {
+          console.error('Barcode render failed:', err);
+        }
+      });
+
+      grid.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(btn.dataset.copy).then(() => {
+            const original = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = original; }, 1500);
+          });
+        });
+      });
+    }
+
+    renderAccounts();
+
+    document.getElementById('sentItBtn').addEventListener('click', () => {
+      document.getElementById('depositForm').reset();
+      openModal('depositModal');
+    });
+  </script>
+
+  <script type="module">
+    import { auth, db } from "../firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+    import { showStatus, hideStatus, setLoading } from "../authHelper.js";
+
+    function initials(nameOrEmail) {
+      if (!nameOrEmail) return '—';
+      const parts = nameOrEmail.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    let currentUserData = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = '../login.html'; return; }
+      if (!user.emailVerified) { window.location.href = '../otp.html'; return; }
+
+      let data = { email: user.email };
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) data = { ...data, ...snap.data() };
+      } catch (err) {
+        console.error('Could not load profile:', err);
+      }
+      currentUserData = data;
+
+      const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ') || data.email;
+      const tag = initials(fullName);
+      document.getElementById('sidebarName').textContent = fullName;
+      document.getElementById('sidebarEmail').textContent = data.email;
+      document.getElementById('sidebarAvatar').textContent = tag;
+      document.getElementById('topbarAvatar').textContent = tag;
+      document.getElementById('balanceValue').textContent = `$${Number(data.balance || 0).toFixed(2)}`;
+    });
+
+    document.getElementById('logoutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const confirmLogout = confirm('Are you sure you want to log out?');
+        if (!confirmLogout) {
+            return;
+        }
+      await signOut(auth);
+      window.location.href = '../login.html';
+    });
+
+    document.getElementById('depositForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusBox = document.getElementById('depositStatus');
+      hideStatus(statusBox);
+
+      const amount = Number(document.getElementById('depositAmount').value);
+      const account = document.getElementById('depositAccount').value;
+
+      if (!amount || amount <= 0) {
+        showStatus(statusBox, 'Enter a valid amount.', 'error');
+        return;
+      }
+      if (!currentUserData) {
+        showStatus(statusBox, "Still loading your account — try again in a moment.", 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('depositSubmitBtn');
+      setLoading(submitBtn, true, 'Submitting…', 'Submit');
+
+      try {
+        const user = auth.currentUser;
+        const fullName = [currentUserData.firstName, currentUserData.lastName].filter(Boolean).join(' ');
+        await addDoc(collection(db, 'deposits'), {
+          uid: user.uid,
+          name: fullName,
+          email: user.email,
+          amount,
+          account,
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+        window.location.href = 'withdrawal.html?tab=history';
+      } catch (err) {
+        console.error('Failed to submit deposit:', err);
+        showStatus(statusBox, "Couldn't submit your deposit. Please try again.", 'error');
+        setLoading(submitBtn, false, 'Submitting…', 'Submit');
+      }
+    });
+  </script>
+
+</body>
+</html>

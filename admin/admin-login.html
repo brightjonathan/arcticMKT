@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Access — ArcticMKT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E1218;
+    --panel: #171D26;
+    --panel-alt: #1D2530;
+    --ink: #E7ECF2;
+    --ink-soft: #8B96A5;
+    --line: #2A3240;
+    --accent: #D9A441;
+    --accent-deep: #B9852B;
+    --danger: #E2574C;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background-image: radial-gradient(circle at 20% 20%, rgba(217,164,65,0.06), transparent 45%);
+  }
+
+  .card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 40px 36px;
+  }
+
+  .lock-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: var(--panel-alt);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .lock-icon svg { width: 19px; height: 19px; stroke: var(--accent); }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .card > p.sub {
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    margin: 0 0 26px;
+    line-height: 1.5;
+  }
+
+  .status-box {
+    display: none;
+    font-size: 0.85rem;
+    padding: 11px 14px;
+    border-radius: 5px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .status-error { background: rgba(226,87,76,0.12); color: #F2867C; border: 1px solid rgba(226,87,76,0.3); }
+
+  .field { margin-bottom: 18px; }
+
+  .field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 7px;
+    color: var(--ink-soft);
+  }
+
+  .field input {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font-size: 0.92rem;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    background: var(--panel-alt);
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(217,164,65,0.14);
+  }
+
+  .field.field-invalid input { border-color: var(--danger); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 12px 0;
+    background: var(--accent);
+    color: #17130A;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .submit-btn:hover { background: var(--accent-deep); }
+  .submit-btn:disabled { background: #4A4636; color: #8B8672; cursor: not-allowed; }
+
+  .foot-note {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="11" width="16" height="9" rx="2"></rect>
+        <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+      </svg>
+    </div>
+    <h1>Admin access</h1>
+    <p class="sub">This panel is restricted to authorized administrators only.</p>
+
+    <div id="statusBox" class="status-box"></div>
+
+    <form id="adminLoginForm" novalidate>
+      <div class="field" id="emailField">
+        <label for="email">Admin email</label>
+        <input type="email" id="email" placeholder="you@arcticmkt.com" autocomplete="username">
+      </div>
+      <div class="field" id="passwordField">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">Sign in</button>
+    </form>
+
+    <p class="foot-note">Lost access? Contact the system owner directly — there's no self-service reset for admin accounts.</p>
+  </div>
+
+  <script type="module">
+    import { auth, db } from "../firebase.js";
+    import { signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+    import { isValidEmail, mapAuthError, showStatus, hideStatus, setLoading } from "../authHelper.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const statusBox = document.getElementById('statusBox');
+    if (params.get('denied') === '1') {
+      showStatus(statusBox, "That account isn't authorized for admin access.", 'error');
+    }
+
+    const form = document.getElementById('adminLoginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideStatus(statusBox);
+
+      let valid = true;
+      const emailOk = isValidEmail(email.value.trim());
+      document.getElementById('emailField').classList.toggle('field-invalid', !emailOk);
+      if (!emailOk) valid = false;
+
+      const passOk = password.value.trim() !== '';
+      document.getElementById('passwordField').classList.toggle('field-invalid', !passOk);
+      if (!passOk) valid = false;
+
+      if (!valid) {
+        showStatus(statusBox, 'Enter a valid email and password.', 'error');
+        return;
+      }
+
+      setLoading(submitBtn, true, 'Signing in…', 'Sign in');
+
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email.value.trim(), password.value);
+
+        // The real gate: only uids present in the "admins" Firestore
+        // collection get past this page, regardless of whether the
+        // email/password themselves were valid.
+        const snap = await getDoc(doc(db, 'admins', cred.user.uid));
+        if (!snap.exists()) {
+          await signOut(auth);
+          showStatus(statusBox, "That account isn't authorized for admin access.", 'error');
+          setLoading(submitBtn, false, 'Signing in…', 'Sign in');
+          return;
+        }
+
+        window.location.href = './admin-dashboard.html';
+      } catch (err) {
+        console.error(err);
+        showStatus(statusBox, mapAuthError(err), 'error');
+        setLoading(submitBtn, false, 'Signing in…', 'Sign in');
+      }
+    });
+  </script>
+
+</body>
+</html>

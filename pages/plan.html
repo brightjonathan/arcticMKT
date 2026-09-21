@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="ArcticMKT - Digital Opportunities & Financial Solutions humaniterian organization and financial services provider. We offer investment planning, wealth management, retirement plans, tax advisory, and risk management solutions.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Enrollment plans - ArcticMKT</title>
+
+    <link rel="icon" href="../Assests/favicon.ico">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../css/custom-override.css">
+
+    <style>
+       /* Google Translate */
+        #google_translate_element {
+            display: inline-flex;
+            align-items: center;
+            max-width: 100%;
+        }
+
+        /* Google's default wrapper */
+        .goog-te-gadget {
+            font-family: inherit !important;
+            font-size: 14px !important;
+            color: inherit !important;
+            white-space: nowrap;
+        }
+
+        /* Hide Google branding text */
+        .goog-te-gadget span {
+            display: none !important;
+        }
+
+        /* Language dropdown */
+        .goog-te-combo {
+            width: 180px;
+            max-width: 100%;
+            height: 42px;
+            padding: 0 36px 0 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            color: #333;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        /* Tablet */
+        @media (max-width: 991px) {
+            .goog-te-combo {
+                width: 160px;
+                height: 40px;
+                font-size: 13px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 767px) {
+            #google_translate_element {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .goog-te-gadget {
+                width: 100%;
+                text-align: center;
+            }
+
+            .goog-te-combo {
+                width: 100%;
+                max-width: 240px;
+                height: 42px;
+                font-size: 14px;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .goog-te-combo {
+                max-width: 200px;
+                height: 40px;
+                font-size: 13px;
+            }
+        }
+
+
+
+        /* Enrollment plans */
+         :root {
+        --bg: #0F1B16;
+        --surface: #16261F;
+        --surface-hi: #1D3128;
+        --gold: #C9A24B;
+        --gold-soft: rgba(201,162,75,0.16);
+        --ink: #F1EDE1;
+        --sage: #8FA898;
+        --line: rgba(241,237,225,0.10);
+    }
+ 
+    .page-head {
+        max-width: 1100px;
+        margin-top: 20vh;
+        text-align: center;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 32px;
+    }
+    
+    .page-head h1 {
+        font-family: 'Fraunces', serif;
+        font-weight: 500;
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        margin: 0 0 10px;
+        letter-spacing: -0.01em;
+    }
+    
+    .page-head p {
+        color: var(--sage);
+        font-size: 1rem;
+        max-width: 480px;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    .grid {
+        max-width: 1100px;
+        margin: 0 auto;
+        margin-bottom: 10vh;
+        
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    @media (max-width: 880px) {
+        .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+        .grid { grid-template-columns: 1fr; }
+    }
+    
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 28px 26px 26px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: border-color 0.25s ease, background 0.25s ease;
+    }
+    
+    .card:hover {
+        border-color: rgba(201,162,75,0.4);
+        background: var(--surface-hi);
+    }
+    
+    .card-tier {
+        font-size: 0.8rem;
+        color: var(--sage);
+        margin: 0 0 18px;
+    }
+    
+    .card-tier b { color: var(--ink); font-weight: 500; }
+    
+    .roi-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+    
+    .roi-number {
+        font-family: 'Fraunces', serif;
+        font-weight: 500;
+        font-size: 3rem;
+        line-height: 1;
+        color: var(--gold);
+    }
+    
+    .roi-label {
+        font-size: 0.95rem;
+        color: var(--sage);
+    }
+    
+    .roi-sub {
+        font-size: 0.85rem;
+        color: var(--sage);
+        margin: 0 0 22px;
+    }
+    
+    .stat-list {
+        list-style: none;
+        margin: 0 0 20px;
+        padding: 18px 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .stat-list li {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+    }
+    
+    .stat-list li span:first-child { color: var(--sage); }
+    .stat-list li span:last-child { color: var(--ink); font-weight: 500; }
+    
+    .feature-list {
+        list-style: none;
+        margin: 0 0 26px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        flex-grow: 1;
+    }
+    
+    .feature-list li {
+        font-size: 0.88rem;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+    
+    .feature-list li::before {
+        content: "";
+        flex-shrink: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--gold);
+    }
+    
+    .enroll-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        background: transparent;
+        color: var(--gold);
+        border: 1px solid var(--gold);
+        border-radius: 3px;
+        padding: 13px 0;
+        font-size: 0.92rem;
+        font-weight: 500;
+        font-family: 'IBM Plex Sans', sans-serif;
+        cursor: pointer;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+    
+    .enroll-btn:hover {
+        background: var(--gold);
+        color: #14201A;
+    }
+    
+    .card.featured {
+        border-color: var(--gold);
+        background: var(--surface-hi);
+    }
+    
+    .card.featured .card-tier::after {
+        content: "Most chosen";
+        margin-left: 10px;
+        color: var(--gold);
+        font-size: 0.75rem;
+    }
+
+    </style>
+
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div class="preloader d-flex align-items-center justify-content-center">
+        <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+    </div>
+    
+    <!-- ===== NAVBAR (single dark bar, logo left, nav center, CTA right) ===== -->
+    <header class="ve-header" id="ve-sticky">
+        <div class="container-fluid ve-nav-wrap">
+            <!-- Logo -->
+            <div class="ve-logo">
+                <a href="../index.html">
+                    <span class="ve-logo-icon">A</span>
+                    <span class="ve-logo-text">arctic<strong>MKT</strong></span>
+                </a>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="ve-nav">
+                <ul>
+                    <li><a href="../index.html" class="active">Home</a></li>
+                    <li><a href="../pages/plan.html">Plans</a></li>
+                    <li class="has-drop">
+                        <a href="../about.html">About <i class="fa fa-angle-down"></i></a>
+                        <ul class="ve-dropdown">
+                            <li><a href="../about.html">About Us</a></li>
+                            <li><a href="../policy.html">Our Policy</a></li>
+                            <li><a href="../policy.html">Our Diversity</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../services.html">Services</a></li>
+                    <li class="has-drop">
+                        <a href="#">more<i class="fa fa-angle-down"></i></a>
+                        <ul class="ve-dropdown">
+                            <li><a href="../policy.html">Sponsoring</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../contact.html">Contact</a></li>
+                </ul>
+            </nav>
+
+            <!-- CTA -->
+            <div class="ve-nav-cta">
+                <a href="../login.html" class="ve-cta-btn">Sign-in <i class="fa fa-arrow-right"></i></a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button class="ve-toggler" id="ve-toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="ve-mobile-menu" id="ve-mobile-menu">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../pages/plan.html">Plans</a></li>
+                <li><a href="../about.html">About us</a></li>
+                <li><a href="../policy.html">Our Policy</a></li>
+                <li><a href="../policy.html">Our Diversity</a></li>
+                <li><a href="../services.html">Services</a></li>
+                <li><a href="../policy.html">Sponsoring</a></li>
+                <li><a href="../contact.html">Contact</a></li>
+            </ul>
+        </div>
+
+        <div class="language-switcher">
+            <i class="fa fa-language"></i>
+            <div id="google_translate_element"></div>
+        </div>
+    </header>
+
+
+
+     <div class="page-head">
+    <h1>Enrollment plans</h1>
+    <h4 style="text-align: center;">No Hidden Charges</h4>
+    <!-- <p>Choose any of our plans which is affordable. Payouts won't be available till end of plan duration</p> -->
+  </div>
+ 
+  <div class="grid">
+ 
+    <div class="card">
+      <p class="card-tier"><b>Finesse</b> · Starter asset</p>
+      <div class="roi-row"><span class="roi-number">4%</span><span class="roi-label">daily ROI</span></div>
+      <p class="roi-sub">Compounding available</p>
+      <ul class="stat-list">
+        <li><span>Duration</span><span>15 days</span></li>
+        <li><span>Minimum</span><span>$200</span></li>
+        <li><span>Maximum</span><span>$10,000</span></li>
+      </ul>
+      <ul class="feature-list">
+        <li>One-time referral bonus, 8%</li>
+        <li>Full support</li>
+        <li>Easy to use</li>
+        <li>Instant withdrawals</li>
+      </ul>
+      <a href="#" class="enroll-btn">Enroll</a>
+    </div>
+ 
+    <div class="card">
+      <p class="card-tier"><b>Finesse </b> · Growth asset</p>
+      <div class="roi-row"><span class="roi-number">6.5%</span><span class="roi-label">daily ROI</span></div>
+      <p class="roi-sub">Compounding available</p>
+      <ul class="stat-list">
+        <li><span>Duration</span><span>15 days</span></li>
+        <li><span>Minimum</span><span>$10,000</span></li>
+        <li><span>Maximum</span><span>$30,000</span></li>
+      </ul>
+      <ul class="feature-list">
+        <li>One-time referral bonus, 8%</li>
+        <li>Full support</li>
+        <li>Easy to use</li>
+        <li>Instant withdrawals</li>
+      </ul>
+      <a href="#" class="enroll-btn">Enroll</a>
+    </div>
+ 
+    <div class="card featured">
+      <p class="card-tier"><b>Finesse 3</b> · Advantage asset</p>
+      <div class="roi-row"><span class="roi-number">8.5%</span><span class="roi-label">daily ROI</span></div>
+      <p class="roi-sub">Compounding available</p>
+      <ul class="stat-list">
+        <li><span>Duration</span><span>25 days</span></li>
+        <li><span>Minimum</span><span>$30,000</span></li>
+        <li><span>Maximum</span><span>$60,000</span></li>
+      </ul>
+      <ul class="feature-list">
+        <li>One-time referral bonus, 8%</li>
+        <li>Full support</li>
+        <li>Easy to use</li>
+        <li>Instant withdrawals</li>
+      </ul>
+      <a href="#" class="enroll-btn">Enroll</a>
+    </div>
+ 
+    <div class="card">
+      <p class="card-tier"><b>Bullion Tier </b> · Premium asset</p>
+      <div class="roi-row"><span class="roi-number">10%</span><span class="roi-label">daily ROI</span></div>
+      <p class="roi-sub">Compounding available</p>
+      <ul class="stat-list">
+        <li><span>Duration</span><span>50 days</span></li>
+        <li><span>Minimum</span><span>$100,000</span></li>
+        <li><span>Maximum</span><span>$500,000</span></li>
+      </ul>
+      <ul class="feature-list">
+        <li>One-time referral bonus, 8%</li>
+        <li>Full support</li>
+        <li>Easy to use</li>
+        <li>Instant withdrawals</li>
+      </ul>
+      <a href="#" class="enroll-btn">Enroll</a>
+    </div>
+ 
+    <div class="card">
+      <p class="card-tier"><b>Karat Tier</b> · Elite asset</p>
+      <div class="roi-row"><span class="roi-number">20%</span><span class="roi-label">daily ROI</span></div>
+      <p class="roi-sub">Compounding available</p>
+      <ul class="stat-list">
+        <li><span>Duration</span><span>50 days</span></li>
+        <li><span>Minimum</span><span>$100,000</span></li>
+        <li><span>Maximum</span><span>$500,000</span></li>
+      </ul>
+      <ul class="feature-list">
+        <li>One-time referral bonus, 8%</li>
+        <li>Full support</li>
+        <li>Easy to use</li>
+        <li>Instant withdrawals</li>
+      </ul>
+      <a href="#" class="enroll-btn">Enroll</a>
+    </div>
+ 
+    <div class="card">
+      <p class="card-tier"><b>Safe Haven Tier</b> · Executive asset</p>
+      <div class="roi-row"><span class="roi-number">40%</span><span class="roi-label">daily ROI</span></div>
+      <p class="roi-sub">Compounding available</p>
+      <ul class="stat-list">
+        <li><span>Duration</span><span>160 days</span></li>
+        <li><span>Minimum</span><span>$500,000</span></li>
+        <li><span>Maximum</span><span>Unlimited</span></li>
+      </ul>
+      <ul class="feature-list">
+        <li>One-time referral bonus, 8%</li>
+        <li>Full support</li>
+        <li>Easy to use</li>
+        <li>Instant withdrawals</li>
+      </ul>
+      <a href="#" class="enroll-btn">Enroll</a>
+    </div>
+ 
+  </div>
+
+    
+    <!-- ===== FOOTER (dark, 4-column) ===== -->
+    <footer class="ve-footer">
+        <div class="container">
+            <div class="row">
+                <!-- Col 1: Brand -->
+                <div class="col-12 col-sm-6 col-lg-4 mb-50">
+                    <div class="ve-footer-brand">
+                        <a href="index.html" class="ve-footer-logo">
+                            <span class="ve-logo-icon">A</span>
+                            <span class="ve-logo-text">Arctic<strong>MKT</strong></span>
+                        </a>
+                        <p>Empowering individuals and businesses with intelligent financial strategies since 2018.</p>
+                        <!-- <div class="ve-social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-linkedin"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                        </div> -->
+                    </div>
+                </div>
+                <!-- Col 2: Quick Links -->
+                <div class="col-12 col-sm-6 col-lg-2 mb-50">
+                    <h5 class="ve-footer-title">Quick Links</h5>
+                    <ul class="ve-footer-links">
+                    <li><a href="#">Plans</a></li>
+                    <li><a href="about.html">About us</a></li>
+                    <li><a href="../policy.html">Our Policy</a></li>
+                    <li><a href="../policy.html">Our Diversity</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="../policy.html">Sponsoring</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <!-- Col 3: Services -->
+                <!-- <div class="col-12 col-sm-6 col-lg-3 mb-50">
+                    <h5 class="ve-footer-title">Our Services</h5>
+                    <ul class="ve-footer-links">
+                        <li><a href="#">Investment Planning</a></li>
+                        <li><a href="#">Wealth Management</a></li>
+                        <li><a href="#">Retirement Plans</a></li>
+                        <li><a href="#">Tax Advisory</a></li>
+                        <li><a href="#">Risk Management</a></li>
+                    </ul>
+                </div> -->
+                <!-- Col 4: Contact -->
+                <div class="col-12 col-sm-6 col-lg-3 mb-50">
+                    <h5 class="ve-footer-title">Get In Touch</h5>
+                    <ul class="ve-footer-contact">
+                        <li><i class="fa fa-map-marker"></i> 42 Harbor View, San Francisco, CA</li>
+                        <li><i class="fa fa-phone"></i> +1 800 555 0199</li>
+                        <li><i class="fa fa-envelope"></i> contact@arcticmkt.org</li>
+                        <!-- <li><i class="fa fa-clock-o"></i> Mon–Fri, 9am – 6pm</li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom Bar -->
+        <div class="ve-footer-bottom">
+            <div class="container">
+                <div class="ve-footer-bottom-inner">
+                    <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script>  ArcticMKT. All Rights Reserved <a href="#" class="text-white" target="_blank"> ArcticMKT TEAM</a> • Distributed by <a href="#" class="text-white" target="_blank"> ArcticMKT</a></p>
+                    <ul>
+                        <li><a href="../policy.html">Privacy Policy</a></li>
+                        <li><a href="../policy.html">Terms of Use</a></li>
+                        <li><a href="../policy.html">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+       
+    </footer>
+
+    
+
+    <!-- Scripts -->
+    <script src="../js/jquery/jquery-2.2.4.min.js"></script>
+    <script src="../js/bootstrap/popper.min.js"></script>
+    <script src="../js/bootstrap/bootstrap.min.js"></script>
+    <script src="../js/plugins/plugins.js"></script>
+    <script src="../js/active.js"></script>
+    <script src="../js/vaultedge.js"></script>
+
+
+     <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages:'en,af,sq,am,ar,hy,az,eu,be,bn,bs,bg,my,ca,ceb,zh-CN,zh-TW,co,hr,cs,da,nl,et,fil,fi,fr,fy,gl,ka,de,el,gu,ht,ha,haw,he,hi,hmn,hu,is,ig,id,ga,it,ja,jv,kn,kk,km,ko,ku,ky,lo,la,lv,lt,lb,mk,mg,ms,ml,mt,mi,mr,mn,ne,no,ny,or,ps,fa,pl,pt,pa,ro,ru,sm,gd,sr,st,sn,sd,si,sk,sl,so,es,su,sw,sv,tg,ta,te,th,tr,uk,ur,ug,uz,vi,cy,xh,yi,yo,zu,ceb,eo,jw,mi,mn',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                },
+                'google_translate_element'
+            );
+        }
+    </script>
+    <script type="text/javascript"
+            src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+    </script>
+
+
+
+</body>
+</html>

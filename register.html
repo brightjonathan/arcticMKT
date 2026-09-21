@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account - ArcticMKT</title>
+<link rel="icon" href="Assests/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #132A3A;
+    --ink-soft: #4C6572;
+    --bg: #F5F9FA;
+    --panel: #FFFFFF;
+    --accent: #2E6F80;
+    --accent-deep: #163B47;
+    --line: #DCE6E9;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .brand-side {
+    background: var(--accent-deep);
+    color: #EAF3F4;
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brand-side::before {
+    content: "";
+    position: absolute;
+    top: -70px;
+    right: -70px;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.07), transparent 70%);
+  }
+
+  .brand-mark {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+    position: relative;
+  }
+
+  .brand-copy {
+    position: relative;
+    max-width: 380px;
+  }
+
+  .brand-copy h1 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 1.3;
+    margin: 0 0 14px;
+  }
+
+  .brand-copy p {
+    color: #C7DEE1;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .brand-foot {
+    position: relative;
+    font-size: 0.8rem;
+    color: #8FB6BC;
+  }
+
+  .form-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    overflow-y: auto;
+  }
+
+  .form-card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .form-card h2 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    font-size: 1.7rem;
+    margin: 0 0 8px;
+  }
+
+  .form-card > p {
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin: 0 0 28px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 7px;
+    color: var(--ink);
+  }
+
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--ink);
+    background: var(--panel);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(46,111,128,0.12);
+  }
+
+  .hint {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  .terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin: 6px 0 22px;
+  }
+
+  .terms input { width: auto; margin-top: 3px; }
+
+  .terms a { color: var(--accent-deep); text-decoration: none; font-weight: 500; }
+  .terms a:hover { text-decoration: underline; }
+
+  .submit-btn {
+    width: 100%;
+    padding: 13px 0;
+    background: var(--accent-deep);
+    color: #EAF3F4;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: 'Work Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .submit-btn:hover { background: var(--accent); }
+
+  .switch-link {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+
+  .switch-link a {
+    color: var(--accent-deep);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .switch-link a:hover { text-decoration: underline; }
+
+  .status-box {
+    display: none;
+    font-size: 0.85rem;
+    padding: 11px 14px;
+    border-radius: 5px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .status-error {
+    background: #FBEAE3;
+    color: #A6391A;
+    border: 1px solid #F1C9B8;
+  }
+
+  .status-success {
+    background: #E4F3EC;
+    color: #1F6B4A;
+    border: 1px solid #BFE3D2;
+  }
+
+  .field.field-invalid input {
+    border-color: #C24A2A;
+  }
+
+  .field-error {
+    font-size: 0.78rem;
+    color: #C24A2A;
+    margin-top: 6px;
+    display: none;
+  }
+
+  .field.field-invalid .field-error { display: block; }
+
+  @media (max-width: 860px) {
+    body { grid-template-columns: 1fr; }
+    .brand-side { display: none; }
+    .form-side { padding: 48px 20px; }
+  }
+
+  @media (max-width: 420px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="brand-side">
+    <div class="brand-mark">ArcticMKT</div>
+    <div class="brand-copy">
+      <h1>Start planning your financial future.</h1>
+      <p>Create an account to access investment planning, wealth management, and retirement solutions built around your goals.</p>
+    </div>
+    <div class="brand-foot">&copy; 2026 ArcticMKT. All rights reserved.</div>
+  </div>
+
+  <div class="form-side">
+    <div class="form-card">
+      <h2>Create your account</h2>
+      <p>It only takes a minute to get started.</p>
+
+      <div id="statusBox" class="status-box"></div>
+
+      <form id="registerForm" novalidate>
+        <div class="two-col">
+          <div class="field" id="fnameField">
+            <label for="fname">First name</label>
+            <input type="text" id="fname" placeholder="Jane" required>
+          </div>
+          <div class="field" id="lnameField">
+            <label for="lname">Last name</label>
+            <input type="text" id="lname" placeholder="Doe" required>
+          </div>
+        </div>
+
+        <div class="field" id="emailField">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+          <p class="field-error">Enter a valid email address.</p>
+        </div>
+
+        <div class="field" id="phoneField">
+          <label for="phone">Phone number</label>
+          <input type="tel" id="phone" placeholder="+1 555 000 0000" required>
+          <p class="hint">Include your country code — used for account records and support.</p>
+          <p class="field-error">Enter a valid phone number with country code, e.g. +15550001234.</p>
+        </div>
+
+        <div class="field" id="passwordField">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Create a password" required>
+          <p class="hint">Use at least 8 characters, with a mix of letters and numbers.</p>
+          <p class="field-error">Password must be at least 8 characters with letters and numbers.</p>
+        </div>
+
+        <div class="field" id="confirmField">
+          <label for="confirm">Confirm password</label>
+          <input type="password" id="confirm" placeholder="Re-enter your password" required>
+          <p class="field-error">Passwords don't match.</p>
+        </div>
+
+        <label class="terms">
+          <input type="checkbox" id="terms" required>
+          <span>I agree to the <a href="policy.html">Terms of Service and Privacy Policy</a>.</span>
+        </label>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Create account</button>
+      </form>
+
+      <p class="switch-link">Already have an account? <a href="login.html">Log in</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from "./firebase.js";
+    import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+    import { isValidEmail, isValidPhone, isStrongEnoughPassword, mapAuthError, showStatus, hideStatus, setLoading } from "./authHelper.js";
+
+    const form = document.getElementById('registerForm');
+    const statusBox = document.getElementById('statusBox');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const fname = document.getElementById('fname');
+    const lname = document.getElementById('lname');
+    const email = document.getElementById('email');
+    const phone = document.getElementById('phone');
+    const password = document.getElementById('password');
+    const confirm = document.getElementById('confirm');
+    const terms = document.getElementById('terms');
+
+    function setFieldError(fieldId, invalid) {
+      document.getElementById(fieldId).classList.toggle('field-invalid', invalid);
+    }
+
+    function validate() {
+      let valid = true;
+
+      setFieldError('fnameField', fname.value.trim() === '');
+      setFieldError('lnameField', lname.value.trim() === '');
+      if (fname.value.trim() === '' || lname.value.trim() === '') valid = false;
+
+      const emailOk = isValidEmail(email.value.trim());
+      setFieldError('emailField', !emailOk);
+      if (!emailOk) valid = false;
+
+      const phoneOk = isValidPhone(phone.value.trim());
+      setFieldError('phoneField', !phoneOk);
+      if (!phoneOk) valid = false;
+
+      const passOk = isStrongEnoughPassword(password.value);
+      setFieldError('passwordField', !passOk);
+      if (!passOk) valid = false;
+
+      const matchOk = confirm.value === password.value && confirm.value !== '';
+      setFieldError('confirmField', !matchOk);
+      if (!matchOk) valid = false;
+
+      if (!terms.checked) valid = false;
+
+      return valid;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideStatus(statusBox);
+
+      if (!validate()) {
+        showStatus(statusBox, 'Please fix the highlighted fields before continuing.', 'error');
+        return;
+      }
+
+      setLoading(submitBtn, true, 'Creating your account…', 'Create account');
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email.value.trim(), password.value);
+
+        // Firebase confirms uniqueness for us: if the email is already registered,
+        // createUserWithEmailAndPassword throws "auth/email-already-in-use" (caught below).
+
+        await updateProfile(cred.user, { displayName: `${fname.value.trim()} ${lname.value.trim()}` });
+
+        // Write the basic profile info to Firestore, in a "users" collection
+        // keyed by the auth uid. This is what dashboard.html and profile.html read from.
+        await setDoc(doc(db, "users", cred.user.uid), {
+          firstName: fname.value.trim(),
+          lastName: lname.value.trim(),
+          email: email.value.trim(),
+          phone: phone.value.trim(),
+          createdAt: serverTimestamp()
+        });
+
+        // Sends a clickable verification link to the user's inbox. This uses
+        // Firebase's built-in email verification — no SMS billing/region setup needed.
+        await sendEmailVerification(cred.user, {
+          url: window.location.origin + '/login.html'
+        });
+
+        // Session-only fallback for the moment right after signup, before the
+        // Firestore doc has necessarily been read back anywhere else.
+        sessionStorage.setItem('pendingUid', cred.user.uid);
+        sessionStorage.setItem('pendingName', `${fname.value.trim()} ${lname.value.trim()}`);
+        sessionStorage.setItem('pendingEmail', email.value.trim());
+        sessionStorage.setItem('pendingPhone', phone.value.trim());
+
+        showStatus(statusBox, 'Account created. Check your inbox for a verification link…', 'success');
+        window.location.href = 'otp.html';
+
+      } catch (err) {
+        console.error(err);
+        showStatus(statusBox, mapAuthError(err), 'error');
+        setLoading(submitBtn, false, 'Creating your account…', 'Create account');
+      }
+    });
+  </script>
+
+</body>
+</html>

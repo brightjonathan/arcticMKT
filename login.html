@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In — ArcticMKT</title>
+<link rel="icon" href="Assests/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #132A3A;
+    --ink-soft: #4C6572;
+    --bg: #F5F9FA;
+    --panel: #FFFFFF;
+    --accent: #2E6F80;
+    --accent-deep: #163B47;
+    --line: #DCE6E9;
+    --error: #B3441E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .brand-side {
+    background: var(--accent-deep);
+    color: #EAF3F4;
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brand-side::before {
+    content: "";
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.07), transparent 70%);
+  }
+
+  .brand-mark {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: 0.01em;
+    position: relative;
+  }
+
+  .brand-copy {
+    position: relative;
+    max-width: 380px;
+  }
+
+  .brand-copy h1 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 1.3;
+    margin: 0 0 14px;
+  }
+
+  .brand-copy p {
+    color: #C7DEE1;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .brand-foot {
+    position: relative;
+    font-size: 0.8rem;
+    color: #8FB6BC;
+  }
+
+  .form-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .form-card {
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .form-card h2 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    font-size: 1.7rem;
+    margin: 0 0 8px;
+  }
+
+  .form-card > p {
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin: 0 0 30px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 7px;
+    color: var(--ink);
+  }
+
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--ink);
+    background: var(--panel);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(46,111,128,0.12);
+  }
+
+  .row-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: -4px 0 24px;
+    font-size: 0.85rem;
+  }
+
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--ink-soft);
+  }
+
+  .row-between a {
+    color: var(--accent-deep);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .row-between a:hover { text-decoration: underline; }
+
+  .submit-btn {
+    width: 100%;
+    padding: 13px 0;
+    background: var(--accent-deep);
+    color: #EAF3F4;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: 'Work Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .submit-btn:hover { background: var(--accent); }
+
+  .switch-link {
+    text-align: center;
+    margin-top: 26px;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+
+  .switch-link a {
+    color: var(--accent-deep);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .switch-link a:hover { text-decoration: underline; }
+
+  .status-box {
+    display: none;
+    font-size: 0.85rem;
+    padding: 11px 14px;
+    border-radius: 5px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .status-error {
+    background: #FBEAE3;
+    color: #A6391A;
+    border: 1px solid #F1C9B8;
+  }
+
+  .status-success {
+    background: #E4F3EC;
+    color: #1F6B4A;
+    border: 1px solid #BFE3D2;
+  }
+
+  .field.field-invalid input {
+    border-color: #C24A2A;
+  }
+
+  @media (max-width: 860px) {
+    body { grid-template-columns: 1fr; }
+    .brand-side { display: none; }
+    .form-side { padding: 48px 20px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="brand-side">
+    <div class="brand-mark">ArcticMKT</div>
+    <div class="brand-copy">
+      <h1>Welcome back to your financial plan.</h1>
+      <p>Log in to track your investments, review your plans, and manage your account with ArcticMKT.</p>
+    </div>
+    <div class="brand-foot">&copy; 2026 ArcticMKT. All rights reserved.</div>
+  </div>
+
+  <div class="form-side">
+    <div class="form-card">
+      <h2>Log in</h2>
+      <p>Enter your details to access your account.</p>
+
+      <div id="statusBox" class="status-box"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="field" id="emailField">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field" id="passwordField">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input type="checkbox" id="remember" style="width:auto;">
+            Remember me
+          </label>
+          <a href="forgottenpassword.html">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Log in</button>
+      </form>
+
+      <p class="switch-link">Don't have an account? <a href="register.html">Create one</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import {
+      signInWithEmailAndPassword,
+      setPersistence,
+      browserLocalPersistence,
+      browserSessionPersistence
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { isValidEmail, mapAuthError, showStatus, hideStatus, setLoading } from "./authHelper.js";
+
+    const form = document.getElementById('loginForm');
+    const statusBox = document.getElementById('statusBox');
+    const submitBtn = document.getElementById('submitBtn');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const remember = document.getElementById('remember');
+
+    function setFieldError(fieldId, invalid) {
+      document.getElementById(fieldId).classList.toggle('field-invalid', invalid);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideStatus(statusBox);
+
+      let valid = true;
+      const emailOk = isValidEmail(email.value.trim());
+      setFieldError('emailField', !emailOk);
+      if (!emailOk) valid = false;
+
+      const passOk = password.value.trim() !== '';
+      setFieldError('passwordField', !passOk);
+      if (!passOk) valid = false;
+
+      if (!valid) {
+        showStatus(statusBox, 'Enter a valid email and password to continue.', 'error');
+        return;
+      }
+
+      setLoading(submitBtn, true, 'Logging in…', 'Log in');
+
+      try {
+        // "Remember me" unchecked signs the user out when the browser tab closes.
+        await setPersistence(auth, remember.checked ? browserLocalPersistence : browserSessionPersistence);
+        const cred = await signInWithEmailAndPassword(auth, email.value.trim(), password.value);
+        if (!cred.user.emailVerified) {
+          window.location.href = './otp.html';
+        } else {
+          window.location.href = './user/dashboard.html';
+        }
+      } catch (err) {
+        console.error(err);
+        showStatus(statusBox, mapAuthError(err), 'error');
+        setLoading(submitBtn, false, 'Logging in…', 'Log in');
+      }
+    });
+  </script>
+
+</body>
+</html>

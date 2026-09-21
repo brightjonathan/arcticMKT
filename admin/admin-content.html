@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content — Admin — ArcticMKT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E1218; --panel: #171D26; --panel-alt: #1D2530; --ink: #E7ECF2; --ink-soft: #8B96A5;
+    --line: #2A3240; --accent: #D9A441; --accent-deep: #B9852B; --danger: #E2574C; --good: #4CAF7D;
+    --sidebar-w: 236px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); }
+  a { text-decoration: none; color: inherit; }
+
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+    background: var(--panel); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; padding: 24px 0; z-index: 40; transition: transform 0.25s ease;
+  }
+  .sidebar-brand {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem;
+    padding: 0 22px 20px; border-bottom: 1px solid var(--line); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .sidebar-brand .tag {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; color: #17130A;
+    background: var(--accent); padding: 2px 7px; border-radius: 4px;
+  }
+  .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 0 22px 20px; }
+  .sidebar-user .avatar {
+    width: 36px; height: 36px; border-radius: 6px; background: var(--panel-alt); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; color: var(--accent);
+  }
+  .sidebar-user .name { font-size: 0.85rem; font-weight: 500; }
+  .sidebar-user .role { font-size: 0.72rem; color: var(--ink-soft); }
+  .nav-group { display: flex; flex-direction: column; gap: 1px; padding: 0 12px; }
+  .nav-link {
+    display: flex; align-items: center; gap: 11px; padding: 10px 11px; border-radius: 6px;
+    font-size: 0.86rem; color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease;
+  }
+  .nav-link svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; }
+  .nav-link:hover { background: var(--panel-alt); color: var(--ink); }
+  .nav-link.active { background: var(--panel-alt); color: var(--accent); }
+  .sidebar-foot { margin-top: auto; padding: 0 12px; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 30; background: var(--bg); border-bottom: 1px solid var(--line);
+    padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; margin-left: var(--sidebar-w);
+  }
+  .menu-toggle {
+    display: none; background: none; border: 1px solid var(--line); border-radius: 6px;
+    width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .menu-toggle svg { width: 17px; height: 17px; stroke: var(--ink); }
+  .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.2rem; margin: 0; }
+  .topbar-avatar {
+    width: 34px; height: 34px; border-radius: 6px; background: var(--accent); color: #17130A;
+    display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;
+  }
+
+  .content { margin-left: var(--sidebar-w); padding: 26px 30px; }
+
+  .toolbar { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+
+  .search-input, .filter-select {
+    padding: 10px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel);
+    color: var(--ink); font-size: 0.86rem; font-family: 'Inter', sans-serif;
+  }
+  .search-input { flex: 1; min-width: 220px; }
+  .search-input:focus, .filter-select:focus { outline: none; border-color: var(--accent); }
+
+  .new-btn {
+    margin-left: auto;
+    padding: 10px 18px;
+    background: var(--accent);
+    color: #17130A;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+  }
+  .new-btn:hover { background: var(--accent-deep); }
+
+  .section-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px 24px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; font-size: 0.74rem; color: var(--ink-soft); font-weight: 500; padding: 10px 12px;
+    border-bottom: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  tbody td { padding: 12px; font-size: 0.86rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  .empty-row td { color: var(--ink-soft); text-align: center; padding: 30px 12px; }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 500; }
+  .pill-published { background: rgba(76,175,125,0.14); color: var(--good); }
+  .pill-draft { background: rgba(217,164,65,0.14); color: var(--accent); }
+
+  .type-tag {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    background: var(--panel-alt);
+    border: 1px solid var(--line);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .row-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel-alt);
+    color: var(--ink-soft); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .icon-btn svg { width: 14px; height: 14px; stroke: currentColor; }
+  .icon-btn:hover { color: var(--ink); border-color: var(--accent); }
+  .icon-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    align-items: center; justify-content: center; z-index: 50; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    width: 100%; max-width: 520px; padding: 28px 26px; max-height: 90vh; overflow-y: auto;
+  }
+  .modal-box h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.15rem; margin: 0 0 20px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 0.82rem; font-weight: 500; margin-bottom: 7px; color: var(--ink-soft); }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--panel-alt); color: var(--ink); font-size: 0.88rem; font-family: 'Inter', sans-serif;
+  }
+  .field textarea { resize: vertical; min-height: 110px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+  .btn { flex: 1; padding: 10px 0; border-radius: 6px; font-size: 0.86rem; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #17130A; }
+  .btn-primary:hover { background: var(--accent-deep); }
+  .btn-danger { background: rgba(226,87,76,0.14); color: var(--danger); border: 1px solid rgba(226,87,76,0.3); }
+  .btn-danger:hover { background: rgba(226,87,76,0.22); }
+  .btn-ghost { background: var(--panel-alt); color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--line); color: var(--ink); }
+
+  .sidebar-scrim { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 35; }
+  .sidebar-scrim.show { display: block; }
+
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.3); }
+    .sidebar.open { transform: translateX(0); }
+    .topbar, .content { margin-left: 0; }
+    .menu-toggle { display: flex; }
+  }
+  @media (max-width: 560px) {
+    .content { padding: 20px 16px; }
+    .topbar { padding: 14px 16px; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">ArcticMKT <span class="tag">ADMIN</span></div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sidebarAvatar">—</div>
+      <div><div class="name" id="sidebarName">Loading…</div><div class="role">Administrator</div></div>
+    </div>
+    <nav class="nav-group">
+      <a class="nav-link" href="admin-dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"></rect><rect x="13" y="3" width="8" height="8" rx="1.5"></rect><rect x="3" y="13" width="8" height="8" rx="1.5"></rect><rect x="13" y="13" width="8" height="8" rx="1.5"></rect></svg>
+        Overview
+      </a>
+      <a class="nav-link" href="admin-users.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"></circle><path d="M2.5 19c.7-3.2 3-5 6.5-5s5.8 1.8 6.5 5"></path><circle cx="17" cy="8" r="2.4"></circle><path d="M15 14c2.6.3 4.2 1.9 4.7 5"></path></svg>
+        Users
+      </a>
+      <a class="nav-link active" href="admin-content.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8M8 13h8M8 17h5"></path></svg>
+        Content
+      </a>
+      <a class="nav-link" href="admin-tickets.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 6h16v9a2 2 0 0 1-2 2H9l-4 3v-3H4z"></path></svg>
+        Support Tickets
+      </a>
+      <a class="nav-link" href="admin-analytics.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 15v-4M12 15V8M16 15v-6"></path></svg>
+        Analytics
+      </a>
+    </nav>
+    <div class="sidebar-foot">
+      <a class="nav-link" href="admin-login.html" id="logoutLink">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="menu-toggle" id="menuToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+      <h1>Content</h1>
+    </div>
+    <div class="topbar-avatar" id="topbarAvatar">—</div>
+  </div>
+
+  <div class="content">
+
+    <div class="toolbar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by title…">
+      <select class="filter-select" id="statusFilter">
+        <option value="all">All statuses</option>
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+      </select>
+      <button class="new-btn" id="newItemBtn">+ New item</button>
+    </div>
+
+    <div class="section-card">
+      <table>
+        <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+        <tbody id="itemsBody">
+          <tr class="empty-row"><td colspan="5">Loading content…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Create/Edit modal -->
+  <div class="modal-overlay" id="itemModal">
+    <div class="modal-box">
+      <h3 id="itemModalTitle">New content item</h3>
+      <form id="itemForm">
+        <div class="field">
+          <label for="itemTitle">Title</label>
+          <input type="text" id="itemTitle" placeholder="e.g. New feature announcement" required>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label for="itemType">Type</label>
+            <select id="itemType">
+              <option value="Page">Page</option>
+              <option value="Post">Post</option>
+              <option value="Announcement">Announcement</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="itemStatus">Status</label>
+            <select id="itemStatus">
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="itemBody">Body</label>
+          <textarea id="itemBody" placeholder="Write the content here…"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('itemModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="itemSaveBtn">Save item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm delete modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box" style="max-width:380px;">
+      <h3>Delete this item?</h3>
+      <p style="font-size:0.88rem; color:var(--ink-soft); margin:0 0 4px;">This permanently removes "<strong id="deleteItemLabel"></strong>". This can't be undone.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('deleteModal')">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const scrim = document.getElementById('sidebarScrim');
+    document.getElementById('menuToggle').addEventListener('click', () => { sidebar.classList.add('open'); scrim.classList.add('show'); });
+    scrim.addEventListener('click', () => { sidebar.classList.remove('open'); scrim.classList.remove('show'); });
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  </script>
+
+  <script type="module">
+    import { db } from "../firebase.js";
+    import { requireAdmin, adminLogout, initials } from "./adminAuth.js";
+    import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    let allItems = [];
+    let editingId = null;
+    let pendingDeleteId = null;
+
+    function formatDate(ts) {
+      if (!ts) return '—';
+      const d = typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function renderItems() {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const tbody = document.getElementById('itemsBody');
+
+      const filtered = allItems.filter(item => {
+        const matchesSearch = !search || (item.title || '').toLowerCase().includes(search);
+        const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No content items match your search.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => `
+        <tr>
+          <td>${item.title || '(untitled)'}</td>
+          <td><span class="type-tag">${item.type || 'Page'}</span></td>
+          <td><span class="pill ${item.status === 'published' ? 'pill-published' : 'pill-draft'}">${item.status === 'published' ? 'Published' : 'Draft'}</span></td>
+          <td>${formatDate(item.updatedAt)}</td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn" title="Edit" data-action="edit" data-id="${item.id}">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z"></path></svg>
+              </button>
+              <button class="icon-btn danger" title="Delete" data-action="delete" data-id="${item.id}">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 7"></path></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadItems() {
+      try {
+        const q = query(collection(db, 'content'), orderBy('updatedAt', 'desc'));
+        const snap = await getDocs(q);
+        allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderItems();
+      } catch (err) {
+        console.error('Failed to load content:', err);
+        document.getElementById('itemsBody').innerHTML =
+          `<tr class="empty-row"><td colspan="5">Couldn't load content. Check the console and your Firestore rules.</td></tr>`;
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderItems);
+    document.getElementById('statusFilter').addEventListener('change', renderItems);
+
+    document.getElementById('newItemBtn').addEventListener('click', () => {
+      editingId = null;
+      document.getElementById('itemModalTitle').textContent = 'New content item';
+      document.getElementById('itemForm').reset();
+      openModal('itemModal');
+    });
+
+    document.getElementById('itemsBody').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const item = allItems.find(i => i.id === id);
+      if (!item) return;
+
+      if (btn.dataset.action === 'edit') {
+        editingId = id;
+        document.getElementById('itemModalTitle').textContent = 'Edit content item';
+        document.getElementById('itemTitle').value = item.title || '';
+        document.getElementById('itemType').value = item.type || 'Page';
+        document.getElementById('itemStatus').value = item.status || 'draft';
+        document.getElementById('itemBody').value = item.body || '';
+        openModal('itemModal');
+      }
+
+      if (btn.dataset.action === 'delete') {
+        pendingDeleteId = id;
+        document.getElementById('deleteItemLabel').textContent = item.title || '(untitled)';
+        openModal('deleteModal');
+      }
+    });
+
+    document.getElementById('itemForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById('itemSaveBtn');
+      const payload = {
+        title: document.getElementById('itemTitle').value.trim(),
+        type: document.getElementById('itemType').value,
+        status: document.getElementById('itemStatus').value,
+        body: document.getElementById('itemBody').value,
+        updatedAt: serverTimestamp()
+      };
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+
+      try {
+        if (editingId) {
+          await updateDoc(doc(db, 'content', editingId), payload);
+        } else {
+          payload.createdAt = serverTimestamp();
+          await addDoc(collection(db, 'content'), payload);
+        }
+        closeModal('itemModal');
+        await loadItems();
+      } catch (err) {
+        console.error('Failed to save item:', err);
+        alert("Couldn't save this item. Check your Firestore rules.");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save item';
+      }
+    });
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+      if (!pendingDeleteId) return;
+      try {
+        await deleteDoc(doc(db, 'content', pendingDeleteId));
+        allItems = allItems.filter(i => i.id !== pendingDeleteId);
+        renderItems();
+        closeModal('deleteModal');
+      } catch (err) {
+        console.error('Failed to delete item:', err);
+        alert("Couldn't delete this item. Check your Firestore rules.");
+      }
+    });
+
+    requireAdmin((user, adminData) => {
+      const name = adminData.name || user.email;
+      document.getElementById('sidebarName').textContent = name;
+      const tag = initials(name);
+      document.getElementById('sidebarAvatar').textContent = tag;
+      document.getElementById('topbarAvatar').textContent = tag;
+      loadItems();
+    });
+
+    document.getElementById('logoutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await adminLogout();
+    });
+  </script>
+
+</body>
+</html>

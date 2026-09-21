@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Tickets — Admin — ArcticMKT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E1218; --panel: #171D26; --panel-alt: #1D2530; --ink: #E7ECF2; --ink-soft: #8B96A5;
+    --line: #2A3240; --accent: #D9A441; --accent-deep: #B9852B; --danger: #E2574C; --good: #4CAF7D;
+    --sidebar-w: 236px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); }
+  a { text-decoration: none; color: inherit; }
+
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+    background: var(--panel); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; padding: 24px 0; z-index: 40; transition: transform 0.25s ease;
+  }
+  .sidebar-brand {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem;
+    padding: 0 22px 20px; border-bottom: 1px solid var(--line); margin-bottom: 16px; display: flex; align-items: center; gap: 9px;
+  }
+  .sidebar-brand .tag { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; color: #17130A; background: var(--accent); padding: 2px 7px; border-radius: 4px; }
+  .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 0 22px 20px; }
+  .sidebar-user .avatar {
+    width: 36px; height: 36px; border-radius: 6px; background: var(--panel-alt); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; color: var(--accent);
+  }
+  .sidebar-user .name { font-size: 0.85rem; font-weight: 500; }
+  .sidebar-user .role { font-size: 0.72rem; color: var(--ink-soft); }
+  .nav-group { display: flex; flex-direction: column; gap: 1px; padding: 0 12px; }
+  .nav-link {
+    display: flex; align-items: center; gap: 11px; padding: 10px 11px; border-radius: 6px;
+    font-size: 0.86rem; color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease;
+  }
+  .nav-link svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; }
+  .nav-link:hover { background: var(--panel-alt); color: var(--ink); }
+  .nav-link.active { background: var(--panel-alt); color: var(--accent); }
+  .sidebar-foot { margin-top: auto; padding: 0 12px; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 30; background: var(--bg); border-bottom: 1px solid var(--line);
+    padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; margin-left: var(--sidebar-w);
+  }
+  .menu-toggle { display: none; background: none; border: 1px solid var(--line); border-radius: 6px; width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer; }
+  .menu-toggle svg { width: 17px; height: 17px; stroke: var(--ink); }
+  .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.2rem; margin: 0; }
+  .topbar-avatar { width: 34px; height: 34px; border-radius: 6px; background: var(--accent); color: #17130A; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+
+  .content { margin-left: var(--sidebar-w); padding: 26px 30px; }
+
+  .toolbar { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .search-input, .filter-select {
+    padding: 10px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel);
+    color: var(--ink); font-size: 0.86rem; font-family: 'Inter', sans-serif;
+  }
+  .search-input { flex: 1; min-width: 220px; }
+  .search-input:focus, .filter-select:focus { outline: none; border-color: var(--accent); }
+
+  .section-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px 24px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; font-size: 0.74rem; color: var(--ink-soft); font-weight: 500; padding: 10px 12px;
+    border-bottom: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  tbody td { padding: 12px; font-size: 0.86rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: var(--panel-alt); }
+  tbody tr:last-child td { border-bottom: none; }
+  .empty-row td { color: var(--ink-soft); text-align: center; padding: 30px 12px; cursor: default; }
+  .empty-row:hover { background: transparent; }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 500; }
+  .pill-open { background: rgba(217,164,65,0.14); color: var(--accent); }
+  .pill-pending { background: rgba(139,150,165,0.16); color: var(--ink-soft); }
+  .pill-closed { background: rgba(76,175,125,0.14); color: var(--good); }
+
+  .priority-tag { font-size: 0.72rem; font-weight: 600; }
+  .priority-high { color: var(--danger); }
+  .priority-medium { color: var(--accent); }
+  .priority-low { color: var(--ink-soft); }
+
+  /* Ticket detail modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    align-items: center; justify-content: center; z-index: 50; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    width: 100%; max-width: 560px; padding: 0; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  .ticket-head { padding: 22px 24px; border-bottom: 1px solid var(--line); }
+  .ticket-head h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.1rem; margin: 0 0 6px; }
+  .ticket-meta { display: flex; gap: 10px; align-items: center; font-size: 0.8rem; color: var(--ink-soft); flex-wrap: wrap; }
+
+  .ticket-thread { padding: 18px 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 0.86rem; line-height: 1.5; }
+  .msg-user { background: var(--panel-alt); align-self: flex-start; border: 1px solid var(--line); }
+  .msg-admin { background: rgba(217,164,65,0.12); align-self: flex-end; border: 1px solid rgba(217,164,65,0.25); }
+  .msg-time { font-size: 0.7rem; color: var(--ink-soft); margin-top: 6px; }
+
+  .ticket-footer { padding: 16px 24px; border-top: 1px solid var(--line); }
+  .ticket-footer textarea {
+    width: 100%; min-height: 70px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--panel-alt); color: var(--ink); font-size: 0.86rem; font-family: 'Inter', sans-serif; resize: vertical; margin-bottom: 10px;
+  }
+  .ticket-footer textarea:focus { outline: none; border-color: var(--accent); }
+
+  .footer-row { display: flex; gap: 10px; align-items: center; }
+  .status-select {
+    padding: 9px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel-alt);
+    color: var(--ink); font-size: 0.84rem; font-family: 'Inter', sans-serif;
+  }
+  .btn { padding: 9px 18px; border-radius: 6px; font-size: 0.86rem; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #17130A; margin-left: auto; }
+  .btn-primary:hover { background: var(--accent-deep); }
+  .btn-ghost { background: var(--panel-alt); color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--line); color: var(--ink); }
+
+  .sidebar-scrim { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 35; }
+  .sidebar-scrim.show { display: block; }
+
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.3); }
+    .sidebar.open { transform: translateX(0); }
+    .topbar, .content { margin-left: 0; }
+    .menu-toggle { display: flex; }
+  }
+  @media (max-width: 560px) {
+    .content { padding: 20px 16px; }
+    .topbar { padding: 14px 16px; }
+    table { font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">ArcticMKT <span class="tag">ADMIN</span></div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sidebarAvatar">—</div>
+      <div><div class="name" id="sidebarName">Loading…</div><div class="role">Administrator</div></div>
+    </div>
+    <nav class="nav-group">
+      <a class="nav-link" href="admin-dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"></rect><rect x="13" y="3" width="8" height="8" rx="1.5"></rect><rect x="3" y="13" width="8" height="8" rx="1.5"></rect><rect x="13" y="13" width="8" height="8" rx="1.5"></rect></svg>
+        Overview
+      </a>
+      <a class="nav-link" href="admin-users.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"></circle><path d="M2.5 19c.7-3.2 3-5 6.5-5s5.8 1.8 6.5 5"></path><circle cx="17" cy="8" r="2.4"></circle><path d="M15 14c2.6.3 4.2 1.9 4.7 5"></path></svg>
+        Users
+      </a>
+      <a class="nav-link" href="admin-content.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8M8 13h8M8 17h5"></path></svg>
+        Content
+      </a>
+      <a class="nav-link active" href="admin-tickets.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 6h16v9a2 2 0 0 1-2 2H9l-4 3v-3H4z"></path></svg>
+        Support Tickets
+      </a>
+      <a class="nav-link" href="admin-analytics.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 15v-4M12 15V8M16 15v-6"></path></svg>
+        Analytics
+      </a>
+    </nav>
+    <div class="sidebar-foot">
+      <a class="nav-link" href="admin-login.html" id="logoutLink">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="menu-toggle" id="menuToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+      <h1>Support Tickets</h1>
+    </div>
+    <div class="topbar-avatar" id="topbarAvatar">—</div>
+  </div>
+
+  <div class="content">
+
+    <div class="toolbar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by subject or requester…">
+      <select class="filter-select" id="statusFilter">
+        <option value="all">All statuses</option>
+        <option value="open">Open</option>
+        <option value="pending">Pending</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+
+    <div class="section-card">
+      <table>
+        <thead><tr><th>Subject</th><th>Requester</th><th>Priority</th><th>Status</th><th>Updated</th></tr></thead>
+        <tbody id="ticketsBody">
+          <tr class="empty-row"><td colspan="5">Loading tickets…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Ticket detail modal -->
+  <div class="modal-overlay" id="ticketModal">
+    <div class="modal-box">
+      <div class="ticket-head">
+        <h3 id="ticketSubject">Ticket subject</h3>
+        <div class="ticket-meta">
+          <span id="ticketRequester">—</span>
+          <span>·</span>
+          <span id="ticketPriority" class="priority-tag">—</span>
+        </div>
+      </div>
+      <div class="ticket-thread" id="ticketThread"></div>
+      <div class="ticket-footer">
+        <textarea id="replyText" placeholder="Type a reply to the user…"></textarea>
+        <div class="footer-row">
+          <select class="status-select" id="ticketStatusSelect">
+            <option value="open">Open</option>
+            <option value="pending">Pending</option>
+            <option value="closed">Closed</option>
+          </select>
+          <button type="button" class="btn btn-ghost" onclick="closeModal('ticketModal')">Close</button>
+          <button type="button" class="btn btn-primary" id="sendReplyBtn">Send reply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const scrim = document.getElementById('sidebarScrim');
+    document.getElementById('menuToggle').addEventListener('click', () => { sidebar.classList.add('open'); scrim.classList.add('show'); });
+    scrim.addEventListener('click', () => { sidebar.classList.remove('open'); scrim.classList.remove('show'); });
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  </script>
+
+  <script type="module">
+    import { db } from "../firebase.js";
+    import { requireAdmin, adminLogout, initials } from "./adminAuth.js";
+    import { collection, getDocs, doc, updateDoc, orderBy, query, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    let allTickets = [];
+    let openTicketId = null;
+
+    function formatDateTime(ts) {
+      if (!ts) return '—';
+      const d = typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+      return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function pillClass(status) {
+      return status === 'closed' ? 'pill-closed' : status === 'pending' ? 'pill-pending' : 'pill-open';
+    }
+
+    function renderTickets() {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const tbody = document.getElementById('ticketsBody');
+
+      const filtered = allTickets.filter(t => {
+        const matchesSearch = !search ||
+          (t.subject || '').toLowerCase().includes(search) ||
+          (t.requesterEmail || '').toLowerCase().includes(search);
+        const matchesStatus = statusFilter === 'all' || (t.status || 'open') === statusFilter;
+        return matchesSearch && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No tickets match your search.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(t => `
+        <tr data-id="${t.id}">
+          <td>${t.subject || '(no subject)'}</td>
+          <td>${t.requesterEmail || '—'}</td>
+          <td><span class="priority-tag priority-${(t.priority || 'medium').toLowerCase()}">${t.priority || 'Medium'}</span></td>
+          <td><span class="pill ${pillClass(t.status)}">${(t.status || 'open').charAt(0).toUpperCase() + (t.status || 'open').slice(1)}</span></td>
+          <td>${formatDateTime(t.updatedAt)}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadTickets() {
+      try {
+        const q = query(collection(db, 'tickets'), orderBy('updatedAt', 'desc'));
+        const snap = await getDocs(q);
+        allTickets = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderTickets();
+      } catch (err) {
+        console.error('Failed to load tickets:', err);
+        document.getElementById('ticketsBody').innerHTML =
+          `<tr class="empty-row"><td colspan="5">Couldn't load tickets. Check the console and your Firestore rules.</td></tr>`;
+      }
+    }
+
+    function renderThread(ticket) {
+      const thread = document.getElementById('ticketThread');
+      const messages = ticket.messages || [];
+      if (messages.length === 0) {
+        thread.innerHTML = `<p style="color:var(--ink-soft); font-size:0.85rem;">No messages yet.</p>`;
+        return;
+      }
+      thread.innerHTML = messages.map(m => `
+        <div class="msg ${m.from === 'admin' ? 'msg-admin' : 'msg-user'}">
+          ${m.text}
+          <div class="msg-time">${m.from === 'admin' ? 'You' : ticket.requesterEmail || 'User'} · ${formatDateTime(m.at)}</div>
+        </div>
+      `).join('');
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    document.getElementById('ticketsBody').addEventListener('click', (e) => {
+      const row = e.target.closest('tr[data-id]');
+      if (!row) return;
+      const ticket = allTickets.find(t => t.id === row.dataset.id);
+      if (!ticket) return;
+
+      openTicketId = ticket.id;
+      document.getElementById('ticketSubject').textContent = ticket.subject || '(no subject)';
+      document.getElementById('ticketRequester').textContent = ticket.requesterEmail || '—';
+      document.getElementById('ticketPriority').textContent = ticket.priority || 'Medium';
+      document.getElementById('ticketPriority').className = `priority-tag priority-${(ticket.priority || 'medium').toLowerCase()}`;
+      document.getElementById('ticketStatusSelect').value = ticket.status || 'open';
+      document.getElementById('replyText').value = '';
+      renderThread(ticket);
+      openModal('ticketModal');
+    });
+
+    document.getElementById('sendReplyBtn').addEventListener('click', async () => {
+      if (!openTicketId) return;
+      const text = document.getElementById('replyText').value.trim();
+      const newStatus = document.getElementById('ticketStatusSelect').value;
+      const ticket = allTickets.find(t => t.id === openTicketId);
+      if (!ticket) return;
+
+      const btn = document.getElementById('sendReplyBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      try {
+        const updates = { status: newStatus, updatedAt: serverTimestamp() };
+        if (text) {
+          updates.messages = arrayUnion({ from: 'admin', text, at: new Date().toISOString() });
+        }
+        await updateDoc(doc(db, 'tickets', openTicketId), updates);
+
+        // Reflect locally without a full reload
+        if (text) ticket.messages = [...(ticket.messages || []), { from: 'admin', text, at: new Date().toISOString() }];
+        ticket.status = newStatus;
+        renderThread(ticket);
+        renderTickets();
+        document.getElementById('replyText').value = '';
+      } catch (err) {
+        console.error('Failed to send reply:', err);
+        alert("Couldn't send this reply. Check your Firestore rules.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send reply';
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', renderTickets);
+    document.getElementById('statusFilter').addEventListener('change', renderTickets);
+
+    requireAdmin((user, adminData) => {
+      const name = adminData.name || user.email;
+      document.getElementById('sidebarName').textContent = name;
+      const tag = initials(name);
+      document.getElementById('sidebarAvatar').textContent = tag;
+      document.getElementById('topbarAvatar').textContent = tag;
+      loadTickets();
+    });
+
+    document.getElementById('logoutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await adminLogout();
+    });
+  </script>
+
+</body>
+</html>

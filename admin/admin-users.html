@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - ArcticMKT</title>
+<link rel="icon" href="../Assests/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E1218;
+    --panel: #171D26;
+    --panel-alt: #1D2530;
+    --ink: #E7ECF2;
+    --ink-soft: #8B96A5;
+    --line: #2A3240;
+    --accent: #D9A441;
+    --accent-deep: #B9852B;
+    --danger: #E2574C;
+    --good: #4CAF7D;
+    --sidebar-w: 236px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); }
+  a { text-decoration: none; color: inherit; }
+
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+    background: var(--panel); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; padding: 24px 0; z-index: 40;
+    transition: transform 0.25s ease;
+  }
+
+  .sidebar-brand {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem;
+    padding: 0 22px 20px; border-bottom: 1px solid var(--line); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 9px;
+  }
+
+  .sidebar-brand .tag {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; color: #17130A;
+    background: var(--accent); padding: 2px 7px; border-radius: 4px;
+  }
+
+  .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 0 22px 20px; }
+
+  .sidebar-user .avatar {
+    width: 36px; height: 36px; border-radius: 6px; background: var(--panel-alt);
+    border: 1px solid var(--line); display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 0.8rem; color: var(--accent); flex-shrink: 0;
+  }
+
+  .sidebar-user .name { font-size: 0.85rem; font-weight: 500; }
+  .sidebar-user .role { font-size: 0.72rem; color: var(--ink-soft); }
+
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 0 12px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .nav-group::-webkit-scrollbar { width: 5px; }
+  .nav-group::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+  .nav-group::-webkit-scrollbar-track { background: transparent; }
+
+  .nav-link {
+    display: flex; align-items: center; gap: 11px; padding: 10px 11px; border-radius: 6px;
+    font-size: 0.86rem; color: var(--ink-soft); transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-link svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; }
+  .nav-link:hover { background: var(--panel-alt); color: var(--ink); }
+  .nav-link.active { background: var(--panel-alt); color: var(--accent); }
+
+  .sidebar-foot { margin-top: auto; padding: 0 12px; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 30; background: var(--bg); border-bottom: 1px solid var(--line);
+    padding: 18px 30px; display: flex; align-items: center; justify-content: space-between;
+    margin-left: var(--sidebar-w);
+  }
+
+  .menu-toggle {
+    display: none; background: none; border: 1px solid var(--line); border-radius: 6px;
+    width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer;
+  }
+
+  .menu-toggle svg { width: 17px; height: 17px; stroke: var(--ink); }
+  .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.2rem; margin: 0; }
+
+  .topbar-avatar {
+    width: 34px; height: 34px; border-radius: 6px; background: var(--accent); color: #17130A;
+    display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;
+  }
+
+  .content { margin-left: var(--sidebar-w); padding: 26px 30px; }
+
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 220px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--ink);
+    font-size: 0.88rem;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .search-input:focus { outline: none; border-color: var(--accent); }
+
+  .filter-select {
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--ink);
+    font-size: 0.86rem;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .section-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 22px 24px;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    text-align: left; font-size: 0.74rem; color: var(--ink-soft); font-weight: 500;
+    padding: 10px 12px; border-bottom: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  tbody td { padding: 12px; font-size: 0.86rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .user-cell { display: flex; align-items: center; gap: 10px; }
+
+  .user-avatar {
+    width: 30px; height: 30px; border-radius: 6px; background: var(--panel-alt);
+    border: 1px solid var(--line); display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 600; color: var(--accent); flex-shrink: 0;
+  }
+
+  .pill {
+    display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 500;
+  }
+
+  .pill-active { background: rgba(76,175,125,0.14); color: var(--good); }
+  .pill-suspended { background: rgba(226,87,76,0.14); color: var(--danger); }
+
+  .row-actions { display: flex; gap: 8px; }
+
+  .icon-btn {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--panel-alt);
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .icon-btn svg { width: 14px; height: 14px; stroke: currentColor; }
+  .icon-btn:hover { color: var(--ink); border-color: var(--accent); }
+  .icon-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+
+  .empty-row td { color: var(--ink-soft); text-align: center; padding: 30px 12px; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    align-items: center; justify-content: center; z-index: 50; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    width: 100%; max-width: 420px; padding: 28px 26px;
+  }
+
+  .modal-box h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.15rem; margin: 0 0 18px; }
+
+  .detail-row {
+    display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 0.86rem;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row span:first-child { color: var(--ink-soft); }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+  .btn {
+    flex: 1; padding: 10px 0; border-radius: 6px; font-size: 0.86rem; font-weight: 500;
+    font-family: 'Inter', sans-serif; cursor: pointer; border: none;
+  }
+
+  .btn-primary { background: var(--accent); color: #17130A; }
+  .btn-primary:hover { background: var(--accent-deep); }
+  .btn-danger { background: rgba(226,87,76,0.14); color: var(--danger); border: 1px solid rgba(226,87,76,0.3); }
+  .btn-danger:hover { background: rgba(226,87,76,0.22); }
+  .btn-ghost { background: var(--panel-alt); color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--line); color: var(--ink); }
+
+  .warn-note {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    background: var(--panel-alt);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  .sidebar-scrim { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 35; }
+  .sidebar-scrim.show { display: block; }
+
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.3); }
+    .sidebar.open { transform: translateX(0); }
+    .topbar, .content { margin-left: 0; }
+    .menu-toggle { display: flex; }
+  }
+
+  @media (max-width: 560px) {
+    .content { padding: 20px 16px; }
+    .topbar { padding: 14px 16px; }
+    table { font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">ArcticMKT <span class="tag">ADMIN</span></div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sidebarAvatar">—</div>
+      <div>
+        <div class="name" id="sidebarName">Loading…</div>
+        <div class="role">Administrator</div>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <a class="nav-link active" href="admin-dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"></rect><rect x="13" y="3" width="8" height="8" rx="1.5"></rect><rect x="3" y="13" width="8" height="8" rx="1.5"></rect><rect x="13" y="13" width="8" height="8" rx="1.5"></rect></svg>
+        Overview
+      </a>
+      <a class="nav-link" href="admin-users.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"></circle><path d="M2.5 19c.7-3.2 3-5 6.5-5s5.8 1.8 6.5 5"></path><circle cx="17" cy="8" r="2.4"></circle><path d="M15 14c2.6.3 4.2 1.9 4.7 5"></path></svg>
+        Users
+      </a>
+      <a class="nav-link" href="admin-deposits.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 19h16"></path></svg>
+        All Deposits
+        <span class="nav-badge" id="depositsBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-withdrawals.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21V9"></path><path d="M7 14l5-5 5 5"></path><path d="M4 5h16"></path></svg>
+        All Withdrawals
+        <span class="nav-badge" id="withdrawalsBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-savings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        Our packages
+      </a>
+      <a class="nav-link" href="admin-enrollments.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        All Enrollments
+        <span class="nav-badge" id="maturedBadge"></span>
+      </a>
+      <a class="nav-link" href="admin-messages.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 4h16v12H7l-3 3V4z"></path></svg>
+        Messages
+      </a>
+      <a class="nav-link" href="admin-analytics.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 15v-4M12 15V8M16 15v-6"></path></svg>
+        Analytics
+      </a>
+      <a class="nav-link" href="admin-referrals.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="8" cy="9" r="3"></circle><circle cx="17" cy="7" r="2.5"></circle><path d="M2.5 19c.7-3.2 3-5 5.5-5s4.8 1.8 5.5 5"></path><path d="M14.5 14.5c2 .2 3.7 1.8 4.2 4.5"></path></svg>
+        Referrals
+        <span class="nav-badge" id="eligibleBadge"></span>
+      </a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a class="nav-link" href="admin-login.html" id="logoutLink">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="menu-toggle" id="menuToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+      <h1>Users</h1>
+    </div>
+    <div class="topbar-avatar" id="topbarAvatar">—</div>
+  </div>
+
+  <div class="content">
+
+    <div class="toolbar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by name or email…">
+      <select class="filter-select" id="statusFilter">
+        <option value="all">All statuses</option>
+        <option value="active">Active</option>
+        <option value="suspended">Suspended</option>
+      </select>
+    </div>
+
+    <div class="section-card">
+      <table>
+        <thead>
+          <tr><th>User</th><th>Phone</th><th>Joined</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody id="usersBody">
+          <tr class="empty-row"><td colspan="5">Loading users…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- View user modal -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal-box">
+      <h3>User details</h3>
+      <div id="viewModalBody"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('viewModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm remove modal -->
+  <div class="modal-overlay" id="removeModal">
+    <div class="modal-box">
+      <h3>Remove user record?</h3>
+      <p style="font-size:0.88rem; color:var(--ink-soft); margin:0 0 6px;">This removes <strong id="removeUserLabel"></strong>'s profile document from Firestore.</p>
+      <div class="warn-note">This does <strong>not</strong> delete their Firebase Authentication account or let them back in with a fresh sign-up under the same email — actually disabling/deleting the login itself requires the Firebase Admin SDK (e.g. a Cloud Function), which runs on a server, not from this page.</div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('removeModal')">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmRemoveBtn">Remove record</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const scrim = document.getElementById('sidebarScrim');
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      sidebar.classList.add('open'); scrim.classList.add('show');
+    });
+    scrim.addEventListener('click', () => {
+      sidebar.classList.remove('open'); scrim.classList.remove('show');
+    });
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  </script>
+
+  <script type="module">
+    import { db } from "../firebase.js";
+    import { requireAdmin, adminLogout, initials } from "./adminAuth.js";
+    import { collection, getDocs, doc, updateDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    let allUsers = [];
+    let pendingRemoveUid = null;
+
+    function formatDate(ts) {
+      if (!ts) return '—';
+      const d = typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function renderUsers() {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const tbody = document.getElementById('usersBody');
+
+      const filtered = allUsers.filter(u => {
+        const name = `${u.firstName || ''} ${u.lastName || ''}`.toLowerCase();
+        const matchesSearch = !search || name.includes(search) || (u.email || '').toLowerCase().includes(search);
+        const status = u.suspended ? 'suspended' : 'active';
+        const matchesStatus = statusFilter === 'all' || statusFilter === status;
+        return matchesSearch && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No users match your search.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(u => {
+        const name = `${u.firstName || ''} ${u.lastName || ''}`.trim() || '(no name)';
+        const tag = initials(name);
+        const suspended = !!u.suspended;
+        return `
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">${tag}</div>
+                <div>
+                  <div>${name}</div>
+                  <div style="color:var(--ink-soft); font-size:0.78rem;">${u.email || '—'}</div>
+                </div>
+              </div>
+            </td>
+            <td>${u.phone || '—'}</td>
+            <td>${formatDate(u.createdAt)}</td>
+            <td><span class="pill ${suspended ? 'pill-suspended' : 'pill-active'}">${suspended ? 'Suspended' : 'Active'}</span></td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-btn" title="View details" data-action="view" data-uid="${u.id}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+                <button class="icon-btn" title="${suspended ? 'Reactivate' : 'Suspend'}" data-action="toggle" data-uid="${u.id}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M8 12h8"></path></svg>
+                </button>
+                <button class="icon-btn danger" title="Remove record" data-action="remove" data-uid="${u.id}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 7"></path></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function loadUsers() {
+      try {
+        const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderUsers();
+      } catch (err) {
+        console.error('Failed to load users:', err);
+        document.getElementById('usersBody').innerHTML =
+          `<tr class="empty-row"><td colspan="5">Couldn't load users. Check the console and your Firestore rules.</td></tr>`;
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderUsers);
+    document.getElementById('statusFilter').addEventListener('change', renderUsers);
+
+    document.getElementById('usersBody').addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const uid = btn.dataset.uid;
+      const user = allUsers.find(u => u.id === uid);
+      if (!user) return;
+
+      if (btn.dataset.action === 'view') {
+        const name = `${user.firstName || ''} ${user.lastName || ''}`.trim() || '(no name)';
+        document.getElementById('viewModalBody').innerHTML = `
+          <div class="detail-row"><span>Name</span><span>${name}</span></div>
+          <div class="detail-row"><span>Email</span><span>${user.email || '—'}</span></div>
+          <div class="detail-row"><span>Phone</span><span>${user.phone || '—'}</span></div>
+          <div class="detail-row"><span>Joined</span><span>${formatDate(user.createdAt)}</span></div>
+          <div class="detail-row"><span>Status</span><span>${user.suspended ? 'Suspended' : 'Active'}</span></div>
+          <div class="detail-row"><span>UID</span><span style="font-family:'IBM Plex Mono',monospace; font-size:0.78rem;">${uid}</span></div>
+        `;
+        openModal('viewModal');
+      }
+
+      if (btn.dataset.action === 'toggle') {
+        try {
+          await updateDoc(doc(db, 'users', uid), { suspended: !user.suspended });
+          user.suspended = !user.suspended;
+          renderUsers();
+        } catch (err) {
+          console.error('Failed to update status:', err);
+          alert("Couldn't update this user's status. Check your Firestore rules.");
+        }
+      }
+
+      if (btn.dataset.action === 'remove') {
+        pendingRemoveUid = uid;
+        const name = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'this user';
+        document.getElementById('removeUserLabel').textContent = name;
+        openModal('removeModal');
+      }
+    });
+
+    document.getElementById('confirmRemoveBtn').addEventListener('click', async () => {
+      if (!pendingRemoveUid) return;
+      try {
+        await deleteDoc(doc(db, 'users', pendingRemoveUid));
+        allUsers = allUsers.filter(u => u.id !== pendingRemoveUid);
+        renderUsers();
+        closeModal('removeModal');
+      } catch (err) {
+        console.error('Failed to remove user record:', err);
+        alert("Couldn't remove this record. Check your Firestore rules.");
+      }
+    });
+
+    requireAdmin((user, adminData) => {
+      const name = adminData.name || user.email;
+      document.getElementById('sidebarName').textContent = name;
+      const tag = initials(name);
+      document.getElementById('sidebarAvatar').textContent = tag;
+      document.getElementById('topbarAvatar').textContent = tag;
+      loadUsers();
+    });
+
+    document.getElementById('logoutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const confirmLogout = confirm('Are you sure you want to log out?');
+        if (!confirmLogout) {
+            return;
+        }
+      await adminLogout();
+    });
+  </script>
+
+</body>
+</html>
