@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Referrals - ArcticMKT</title>
-<link rel="icon" href="../Assests/favicon.ico">
+<title>Identity Verification — ArcticMKT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -546,17 +545,17 @@
       </a>
       <a class="nav-link" href="wallet.html">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M3 10h18"></path><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path></svg>
-        Wallet
+        Deposit / Fund Wallet
       </a>
       <a class="nav-link" href="plans.html">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path><path d="M14 3v5h5"></path></svg>
         My Savings Plans
       </a>
-      <a class="nav-link" href="withdrawal.html">
+      <a class="nav-link active" href="withdrawal.html">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 19h16"></path></svg>
         Withdrawals
       </a>
-      <a class="nav-link active" href="referrals.html">
+      <a class="nav-link" href="referrals.html">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="8" cy="9" r="3"></circle><circle cx="17" cy="7" r="2.5"></circle><path d="M2.5 19c.7-3.2 3-5 5.5-5s4.8 1.8 5.5 5"></path><path d="M14.5 14.5c2 .2 3.7 1.8 4.2 4.5"></path></svg>
         Referrals
       </a>
@@ -588,7 +587,7 @@
       <button class="menu-toggle" id="menuToggle">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
       </button>
-      <h1>Referrals</h1>
+      <h1>Identity Verification</h1>
     </div>
     <div class="topbar-right">
       <div class="bell-btn">
@@ -602,42 +601,59 @@
   <!-- Main content -->
   <div class="content">
 
-    <div class="table-card" style="padding: 26px 28px; margin-bottom: 28px;">
+    <div id="statusCard" class="table-card" style="padding: 26px 28px; margin-bottom: 28px; display:none;">
+      <h2 style="font-family:'Source Serif 4',serif; font-weight:500; font-size:1.15rem; margin:0 0 10px;">Your verification status</h2>
+      <div id="statusContent"></div>
+    </div>
+
+    <div id="formCard" class="table-card" style="padding: 26px 28px;">
       <div class="section-head" style="margin: 0 0 4px;">
-        <h2>Your referral link</h2>
+        <h2>Submit your ID</h2>
       </div>
-      <p style="color: var(--ink-soft); font-size: 0.88rem; margin: 0 0 18px;">Share this link — anyone who registers through it is recorded as your referral below.</p>
+      <p style="color: var(--ink-soft); font-size: 0.88rem; margin: 0 0 20px; max-width: 60ch;">
+        Upload a clear photo or scan of a government-issued ID. Our team reviews submissions manually — this isn't instant, so please allow some time after submitting.
+      </p>
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <input type="text" id="referralLink" readonly style="flex:1; min-width:240px; padding:11px 13px; border:1px solid var(--line); border-radius:5px; font-size:0.88rem; font-family:'IBM Plex Mono',monospace; color:var(--ink); background:var(--chip);">
-        <button type="button" class="plan-btn" style="width:auto; padding:11px 22px;" id="copyLinkBtn">Copy link</button>
-      </div>
-    </div>
+      <div id="kycStatusBox" class="status-box" style="display:none;"></div>
 
-    <div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
-      <div class="stat-card">
-        <div class="stat-label">People referred</div>
-        <div class="stat-value" id="referralCount">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Referral bonus</div>
-        <div class="stat-value" id="referralBonusValue">$0.00</div>
-      </div>
-    </div>
+      <form id="kycForm">
+        <div class="field">
+          <label for="docType">Document type</label>
+          <select id="docType" required>
+            <option value="Passport">Passport</option>
+            <option value="Driver's License">Driver's License</option>
+            <option value="National ID">National ID card</option>
+          </select>
+        </div>
+        <div>
+    <p>
+        To complete your KYC verification, please send a clear copy of any of the following valid identification documents to 
+        <strong style="font-size: 4vh; color: green;">contact@arcticmkt.org</strong>
+    </p>
 
-    <div class="section-head">
-      <h2>Your referrals</h2>
-    </div>
+    <ul>
+        <li>International Passport</li>
+        <li>Driver's License</li>
+        <li>National ID Card</li>
+    </ul>
 
-    <div class="table-card">
-      <table>
-        <thead>
-          <tr><th>Name</th><th>Joined</th><th>Status</th></tr>
-        </thead>
-        <tbody id="referralsBody">
-          <tr><td colspan="2" style="color: var(--ink-soft); text-align:center; padding: 24px;">Loading…</td></tr>
-        </tbody>
-      </table>
+    <p>
+        Please ensure that your document is clear, valid, and all required information is visible.
+        Your document will be used solely for identity verification purposes.
+    </p>
+</div>
+        <!-- <div class="field">
+          <label for="docFile">Document (image or PDF, max 10MB)</label>
+          <input type="file" id="docFile" accept="image/*,application/pdf" required>
+        </div> -->
+        <!-- <div id="uploadProgress" style="display:none; margin-bottom: 16px;">
+          <div style="height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden;">
+            <div id="progressBar" style="height:100%; width:0%; background: var(--accent); transition: width 0.2s ease;"></div>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--ink-soft); margin: 6px 0 0;" id="progressLabel">Uploading…</p>
+        </div> -->
+        <!-- <button type="submit" class="plan-btn" style="width: auto; padding: 12px 28px;" id="kycSubmitBtn">Submit for review</button> -->
+      </form>
     </div>
 
   </div>
@@ -656,9 +672,11 @@
   </script>
 
   <script type="module">
-    import { auth, db } from "../firebase.js";
+    import { auth, db, storage } from "../firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-    import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+    import { doc, getDoc, collection, addDoc, query, where, orderBy, limit, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+    import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+    import { showStatus, hideStatus, setLoading } from "../authHelper.js";
 
     function initials(nameOrEmail) {
       if (!nameOrEmail) return '—';
@@ -673,42 +691,53 @@
       return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    async function loadReferrals(uid) {
-      const tbody = document.getElementById('referralsBody');
+    let currentUid = null;
+    let currentUserData = null;
+
+    function renderStatus(latest) {
+      const card = document.getElementById('statusCard');
+      const content = document.getElementById('statusContent');
+      const formCard = document.getElementById('formCard');
+
+      if (!latest) {
+        card.style.display = 'none';
+        return;
+      }
+      card.style.display = 'block';
+
+      const status = latest.status || 'pending';
+      let pillClass = 'status-pending';
+      let label = 'Pending review';
+      if (status === 'approved') { pillClass = 'status-complete'; label = 'Verified'; }
+      else if (status === 'rejected') { pillClass = 'status-pending'; label = 'Rejected — please resubmit'; }
+
+      content.innerHTML = `
+        <p style="margin: 0 0 8px; font-size: 0.9rem;">
+          <span class="status-pill ${pillClass}">${label}</span>
+        </p>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--ink-soft);">
+          ${latest.docType || 'Document'} submitted ${formatDate(latest.submittedAt)}
+          ${latest.reviewNote ? `<br>Note from admin: ${latest.reviewNote}` : ''}
+        </p>
+      `;
+
+      // Hide the upload form once verified — no need to resubmit. Still show
+      // it while pending (in case they want to send a better copy) or after
+      // a rejection (so they can try again).
+      formCard.style.display = status === 'approved' ? 'none' : 'block';
+    }
+
+    async function loadLatestSubmission(uid) {
       try {
-        // Note: we deliberately don't query the "deposits" collection here.
-        // Firestore rules only let a user read their OWN deposit records, so
-        // a referrer can't see whether people they referred have deposited —
-        // that determination (and the "eligible" status) only happens on the
-        // admin side, in admin-referrals.html. This page can only show
-        // whether a bonus has actually been paid, since referralBonuses
-        // rules do allow a user to read bonuses where they're the referrer.
-        const [referredSnap, bonusesSnap] = await Promise.all([
-          getDocs(query(collection(db, 'users'), where('referredBy', '==', uid))),
-          getDocs(query(collection(db, 'referralBonuses'), where('referrerUid', '==', uid)))
-        ]);
-
-        document.getElementById('referralCount').textContent = referredSnap.size;
-
-        const paidReferredUids = new Set(bonusesSnap.docs.map(d => d.data().referredUid));
-        const bonusTotal = bonusesSnap.docs.reduce((sum, d) => sum + Number(d.data().amount || 0), 0);
-        document.getElementById('referralBonusValue').textContent = `$${bonusTotal.toFixed(2)}`;
-
-        if (referredSnap.empty) {
-          tbody.innerHTML = `<tr><td colspan="3" style="color: var(--ink-soft); text-align:center; padding: 24px;">No referrals yet — share your link above.</td></tr>`;
-          return;
+        const q = query(collection(db, 'kycSubmissions'), where('uid', '==', uid), orderBy('submittedAt', 'desc'), limit(1));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          renderStatus(snap.docs[0].data());
+        } else {
+          renderStatus(null);
         }
-        tbody.innerHTML = referredSnap.docs.map(d => {
-          const u = d.data();
-          const name = [u.firstName, u.lastName].filter(Boolean).join(' ') || '(no name)';
-          const status = paidReferredUids.has(d.id)
-            ? `<span class="status-pill status-complete">Bonus paid</span>`
-            : `<span class="status-pill status-pending">Pending</span>`;
-          return `<tr><td>${name}</td><td>${formatDate(u.createdAt)}</td><td>${status}</td></tr>`;
-        }).join('');
       } catch (err) {
-        console.error('Failed to load referrals:', err);
-        tbody.innerHTML = `<tr><td colspan="3" style="color: var(--ink-soft); text-align:center; padding: 24px;">Couldn't load your referrals.</td></tr>`;
+        console.error('Failed to load KYC status:', err);
       }
     }
 
@@ -716,6 +745,7 @@
       if (!user) { window.location.href = '../login.html'; return; }
       if (!user.emailVerified) { window.location.href = '../otp.html'; return; }
 
+      currentUid = user.uid;
       let data = { email: user.email };
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
@@ -723,6 +753,7 @@
       } catch (err) {
         console.error('Could not load profile:', err);
       }
+      currentUserData = data;
 
       const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ') || data.email;
       const tag = initials(fullName);
@@ -731,20 +762,7 @@
       document.getElementById('sidebarAvatar').textContent = tag;
       document.getElementById('topbarAvatar').textContent = tag;
 
-      const link = `${window.location.origin}/register.html?ref=${user.uid}`;
-      document.getElementById('referralLink').value = link;
-
-      loadReferrals(user.uid);
-    });
-
-    document.getElementById('copyLinkBtn').addEventListener('click', () => {
-      const input = document.getElementById('referralLink');
-      navigator.clipboard.writeText(input.value).then(() => {
-        const btn = document.getElementById('copyLinkBtn');
-        const original = btn.textContent;
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = original; }, 1500);
-      });
+      loadLatestSubmission(user.uid);
     });
 
     document.getElementById('logoutLink').addEventListener('click', async (e) => {
@@ -755,6 +773,71 @@
         }
       await signOut(auth);
       window.location.href = '../login.html';
+    });
+
+    document.getElementById('kycForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusBox = document.getElementById('kycStatusBox');
+      hideStatus(statusBox);
+
+      const docType = document.getElementById('docType').value;
+      const file = document.getElementById('docFile').files[0];
+
+      if (!file) {
+        showStatus(statusBox, 'Choose a file to upload.', 'error');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        showStatus(statusBox, 'That file is too large — max 10MB.', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('kycSubmitBtn');
+      setLoading(submitBtn, true, 'Uploading…', 'Submit for review');
+      document.getElementById('uploadProgress').style.display = 'block';
+
+      try {
+        const path = `kyc/${currentUid}/${Date.now()}_${file.name}`;
+        const storageRef = ref(storage, path);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        await new Promise((resolve, reject) => {
+          uploadTask.on('state_changed',
+            (snapshot) => {
+              const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+              document.getElementById('progressBar').style.width = pct + '%';
+              document.getElementById('progressLabel').textContent = `Uploading… ${pct}%`;
+            },
+            reject,
+            resolve
+          );
+        });
+
+        const fileURL = await getDownloadURL(storageRef);
+        const fullName = [currentUserData.firstName, currentUserData.lastName].filter(Boolean).join(' ');
+
+        await addDoc(collection(db, 'kycSubmissions'), {
+          uid: currentUid,
+          name: fullName,
+          email: currentUserData.email,
+          docType,
+          fileURL,
+          filePath: path,
+          status: 'pending',
+          submittedAt: serverTimestamp()
+        });
+
+        document.getElementById('kycForm').reset();
+        document.getElementById('uploadProgress').style.display = 'none';
+        showStatus(statusBox, 'Submitted! An admin will review your document shortly.', 'success');
+        loadLatestSubmission(currentUid);
+      } catch (err) {
+        console.error('Failed to submit KYC document:', err);
+        showStatus(statusBox, "Couldn't upload your document. Please try again.", 'error');
+        document.getElementById('uploadProgress').style.display = 'none';
+      } finally {
+        setLoading(submitBtn, false, 'Uploading…', 'Submit for review');
+      }
     });
   </script>
 
